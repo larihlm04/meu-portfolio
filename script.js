@@ -547,3 +547,261 @@ function buildDepthText(el, {
 
   els.forEach(el => obs.observe(el));
 })();
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const spreadKora = document.getElementById("spreadKora");
+  const flipKora   = document.getElementById("koraFlip");
+  const story      = document.querySelector("#spreadKora .story--smoke");
+
+  if (!spreadKora || !flipKora || !story) return;
+
+  const canvas = story.querySelector(".smoke-canvas");
+  const ctx = canvas?.getContext("2d");
+  const steps = [...story.querySelectorAll(".story-step")];
+
+  if (!canvas || !ctx || steps.length === 0) return;
+
+  /* ===== canvas smoke ===== */
+  let w, h;
+  function resize(){
+    w = canvas.width  = Math.max(1, Math.floor(story.offsetWidth  * 1.8));
+    h = canvas.height = Math.max(1, Math.floor(story.offsetHeight * 1.8));
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  const particles = [];
+  const COUNT = 24;
+
+  function reset(p){
+    p.x = Math.random() * w;
+    p.y = Math.random() * h;
+    p.r = 90 + Math.random() * 180;
+    p.vx = -0.15 + Math.random() * 0.25;
+    p.vy = -0.06 + Math.random() * 0.12;
+    p.a = 0.006 + Math.random() * 0.01;
+  }
+
+  for(let i=0;i<COUNT;i++){
+    const p = {};
+    reset(p);
+    particles.push(p);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(const p of particles){
+      const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+      g.addColorStop(0, `rgba(255,255,255,${p.a})`);
+      g.addColorStop(1, `rgba(255,255,255,0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < -p.r) p.x = w + p.r;
+      if(p.y < -p.r) p.y = h + p.r;
+      if(p.y > h + p.r) p.y = -p.r;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  /* ===== troca de frases ===== */
+  let index = 0;
+  const interval = Number(story.dataset.interval || 7500);
+  const stopAfter = Number(story.dataset.stopAfter || 24000);
+
+  steps.forEach(s => s.classList.remove("is-active"));
+  steps[0].classList.add("is-active");
+
+  let timer = setInterval(() => {
+    steps[index].classList.remove("is-active");
+    setTimeout(() => {
+      index = (index + 1) % steps.length;
+      steps[index].classList.add("is-active");
+    }, 1200);
+  }, interval);
+
+  /* ===== sequência KORA (sem bug) ===== */
+  setTimeout(() => {
+    // 1) para a troca antes de esconder (evita piscada)
+    clearInterval(timer);
+
+    // 2) deixa um step ativo e não mexe mais
+    steps.forEach(s => s.classList.remove("is-active"));
+    steps[Math.min(index, steps.length - 1)].classList.add("is-active");
+
+    // 3) esconde story
+    story.classList.add("is-hidden");
+
+    setTimeout(() => {
+      // 4) flip
+      flipKora.classList.add("is-flipped");
+
+      // 5) move pra direita
+      spreadKora.classList.add("move-right");
+
+      setTimeout(() => {
+        // 6) fixa layout
+        spreadKora.classList.remove("move-right");
+        spreadKora.classList.add("is-swapped");
+      }, 900);
+
+    }, 600);
+
+  }, stopAfter);
+
+});
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* ===== SMOKE + troca de frases (só no EcoMarine) ===== */
+  const storyEco = document.querySelector("#spreadEco .story--smoke");
+  const spreadEco = document.getElementById("spreadEco");
+  const flipEco = document.getElementById("ecoFlip");
+
+  if (!storyEco || !spreadEco || !flipEco) return;
+
+  const canvas = storyEco.querySelector(".smoke-canvas");
+  const ctx = canvas?.getContext("2d");
+  const steps = [...storyEco.querySelectorAll(".story-step")];
+
+  if (!canvas || !ctx || steps.length === 0) return;
+
+  let w, h;
+  function resize(){
+    w = canvas.width  = Math.max(1, Math.floor(storyEco.offsetWidth  * 1.8));
+    h = canvas.height = Math.max(1, Math.floor(storyEco.offsetHeight * 1.8));
+  }
+  resize();
+  window.addEventListener("resize", resize);
+
+  const particles = [];
+  const COUNT = 24;
+
+  function reset(p){
+    p.x = Math.random() * w;
+    p.y = Math.random() * h;
+    p.r = 90 + Math.random() * 180;
+    p.vx = -0.15 + Math.random() * 0.25;
+    p.vy = -0.06 + Math.random() * 0.12;
+    p.a = 0.006 + Math.random() * 0.01;
+  }
+
+  for(let i=0;i<COUNT;i++){
+    const p = {};
+    reset(p);
+    particles.push(p);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    for(const p of particles){
+      const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+      g.addColorStop(0, `rgba(255,255,255,${p.a})`);
+      g.addColorStop(1, `rgba(255,255,255,0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < -p.r) p.x = w + p.r;
+      if(p.y < -p.r) p.y = h + p.r;
+      if(p.y > h + p.r) p.y = -p.r;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // troca frases
+  let index = 0;
+  const interval = Number(storyEco.dataset.interval || 7500);
+  const stopAfter = Number(storyEco.dataset.stopAfter || 24000);
+
+  steps.forEach(s => s.classList.remove("is-active"));
+  steps[0].classList.add("is-active");
+
+  let timer = setInterval(() => {
+    steps[index].classList.remove("is-active");
+    setTimeout(() => {
+      index = (index + 1) % steps.length;
+      steps[index].classList.add("is-active");
+    }, 1200);
+  }, interval);
+
+  // ===== SEQUÊNCIA ECO: some story -> flip -> anda esquerda -> swap =====
+  setTimeout(() => {
+    clearInterval(timer);
+
+    steps.forEach(s => s.classList.remove("is-active"));
+    steps[Math.min(index, steps.length - 1)].classList.add("is-active");
+
+    storyEco.classList.add("is-hidden");
+
+    setTimeout(() => {
+      flipEco.classList.add("is-flipped");
+
+      // move para ESQUERDA (sutil)
+      spreadEco.classList.remove("move-right");
+
+      setTimeout(() => {
+        spreadEco.classList.remove("move-right");
+        spreadEco.classList.add("is-swapped");
+
+      }, 900);
+
+    }, 600);
+
+  }, stopAfter);
+
+});
+
+
+// ===== SEQUÊNCIA ECO: some story -> flip -> anda direita -> swap =====
+
+setTimeout(() => {
+  clearInterval(timer);
+
+  storyEco.classList.add("is-hidden");
+
+  setTimeout(() => {
+    // flip
+    flipEco.classList.add("is-flipped");
+
+    // move pra direita
+    spreadEco.classList.add("move-right");
+
+    setTimeout(() => {
+      // assenta layout + mostra texto da esquerda
+      spreadEco.classList.remove("move-right");
+      spreadEco.classList.add("is-swapped");
+    }, 900);
+
+  }, 600);
+
+}, stopAfter);
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const phrase = document.querySelector(".reveal-phrase");
+  if(!phrase) return;
+
+  // aparece depois de um tempinho (ex: 1.2s)
+  setTimeout(() => {
+    phrase.classList.add("is-visible");
+  }, 1200);
+});
+
+
+
+
+
+

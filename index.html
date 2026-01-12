@@ -6,6 +6,11 @@
   <title>Meu portfólio</title>
 
   <link rel="stylesheet" href="style.css" />
+  <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+
   <script src="script.js" defer></script>
 </head>
 
@@ -13,12 +18,12 @@
 
   <!-- INTRO FULLSCREEN -->
   <section class="intro" id="intro">
-    <div class="intro-bg" style="background-image:url('images/minha-foto.jpg')"></div>
+    <div class="intro-bg" style="background-image:url('images/Desenvolvedora_web.png')"></div>
 
     <div class="intro-overlay">
       <div class="intro-content">
-        <p class="intro-kicker">Larissa • Desenvolvedora web</p>
-        <h1 class="intro-title">Portfólio</h1>
+        <!--<p class="intro-kicker">Larissa • Desenvolvedora web</p>-->
+        <!--<h1 class="intro-title">Portfólio</h1>-->
         <p class="intro-sub">Clique para entrar</p>
 
         <button class="intro-btn" id="enterBtn" type="button">Entrar</button>
@@ -196,81 +201,180 @@
       </p>
     </header>
 
-    <!-- Projeto 01 -->
-    <article class="spread">
-      <figure class="spread-visual">
-        <img src="images/pro_01.png" alt="Textura/abstrato do projeto Kora" />
+    <!-- ===================== PROJETO 01 (KORA) ===================== -->
+<article class="spread" id="spreadKora">
+
+  <figure class="spread-visual flip-card" id="koraFlip">
+    <div class="flip-inner">
+      <div class="flip-face flip-front">
+        <img src="images/projeto_1.png" alt="Textura/abstrato do projeto Kora" />
         <figcaption class="spread-caption">textura + respiro (clima calmo)</figcaption>
-      </figure>
+      </div>
 
-      <div class="spread-text">
-        <p class="spread-topline">Projeto KORA</p>
-        <h3 class="spread-name">Silêncio Visual marcante</h3>
+      <div class="flip-face flip-back">
+        <img src="images/pro_01.png" alt="Projeto Kora - verso" />
+        <figcaption class="spread-caption">segunda visão (verso)</figcaption>
+      </div>
+    </div>
+  </figure>
 
-        <div class="spread-tags">
-          <span class="tag">E-commerce</span>
-          <span class="tag">Editorial</span>
-          <span class="tag">Motion leve</span>
-        </div>
+  <div class="spread-text" id="koraText">
+    <!-- INICIAL -->
+    <div class="initial">
+      <p class="spread-topline">Silêncio visual marcante</p>
+      <h3 class="spread-name">Projeto KORA</h3>
 
-        <a href="https://projeto-kora-476ca4.netlify.app/" target="_blank" class="project-link" rel="noreferrer">
-          Ver site ao vivo →
-        </a>
+      <div class="spread-tags">
+        <span class="tag">E-commerce</span>
+        <span class="tag">Editorial</span>
+        <span class="tag">Motion leve</span>
+      </div>
 
-        <div class="story">
-          <p><strong>Problema</strong><br>
-            Tem muita interface que parece que tá gritando o tempo todo… aí você abre e já cansa.
-          </p>
+      <a href="https://projeto-kora-476ca4.netlify.app/"
+         target="_blank"
+         class="project-link-one project-link-glow"
+         rel="noreferrer">
+        Ver site ao vivo →
+      </a>
 
-          <p><strong>Ideia</strong><br>
-            Eu quis fazer o contrário: deixar tudo respirar. Usei textura suave, espaço negativo e um ritmo bem de leve
-            pra guiar o olho sem poluir.
-          </p>
+      <!-- STORY + FUMAÇA -->
+      <div class="story story--smoke" data-interval="7500" data-stop-after="24000">
+        <canvas class="smoke-canvas"></canvas>
 
-          <p><strong>Resultado</strong><br>
-            Uma UI com cara de editorial moderno: limpa, mas com personalidade. Fica “quietinha”, só que marcante.
-          </p>
+        <div class="story-steps">
+          <div class="story-step is-active">
+            <p><strong>Problema</strong><br>
+              Tem muita interface que parece que tá gritando o tempo todo… aí você abre e já cansa.
+            </p>
+          </div>
+
+          <div class="story-step">
+            <p><strong>Ideia</strong><br>
+              Eu quis fazer o contrário: deixar tudo respirar. Usei textura suave, espaço negativo e um ritmo bem de leve
+              pra guiar o olho sem poluir.
+            </p>
+          </div>
+
+          <div class="story-step">
+            <p><strong>Resultado</strong><br>
+              Uma UI com cara de editorial moderno: limpa, mas com personalidade. Fica “quietinha”, só que marcante.
+            </p>
+          </div>
         </div>
       </div>
-    </article>
+    </div>
 
-    <!-- Projeto 02 -->
-    <article class="spread spread--reverse">
-      <figure class="spread-visual">
-        <img src="images/pro_02.png" alt="Textura/abstrato do projeto Ecomarine" />
+    <!-- AFTER (aparece depois) -->
+    <div class="after">
+      <p class="spread-topline">Contexto do projeto</p>
+      <h3 class="spread-name">Como eu construí o projeto</h3>
+
+      <p class="after-text">
+        O KORA é um projeto focado em loja virtual, mas com foco forte em experiência: ambiente limpo,
+        leve, com textura e elegância. Desenvolvido com HTML, CSS e JavaScript, com apoio do Figma.
+      </p>
+
+<p class="reveal-phrase">
+  Não se esqueça de dar uma olhada no site ao vivo! <3</p>
+
+
+    </div>
+
+    
+
+
+  </div>
+</article>
+
+
+
+<!-- ===================== PROJETO 02 (ECOMARINE) ===================== -->
+<article class="spread" id="spreadEco">
+
+
+  <figure class="spread-visual flip-card" id="ecoFlip">
+    <div class="flip-inner">
+      <div class="flip-face flip-front">
+        <img src="images/logo.jpg" alt="Projeto EcoMarine" />
         <figcaption class="spread-caption">camadas + estrutura (clima equilibrado)</figcaption>
-      </figure>
+      </div>
 
-      <div class="spread-text">
-        <p class="spread-topline">Projeto Ecomarine</p>
-        <h3 class="spread-name">Criatividade no limite</h3>
+      <div class="flip-face flip-back">
+        <img src="images/pro_02.png" alt="EcoMarine - verso" />
+        <figcaption class="spread-caption">segunda visão (verso)</figcaption>
+      </div>
+    </div>
+  </figure>
 
-        <div class="spread-tags">
-          <span class="tag">Sociedade</span>
-          <span class="tag">Design</span>
-          <span class="tag">Interação</span>
-        </div>
+  <div class="spread-text" id="ecoText">
+    <!-- INICIAL -->
+    <div class="initial">
+      <p class="spread-topline">Criatividade no limite</p>
+      <h3 class="spread-name">Projeto EcoMarine</h3>
 
-        <a href="https://projetomed.com.br/TECTI/2025/gp01/ecomarine/pages/" target="_blank" class="project-link" rel="noreferrer">
-          Ver site ao vivo →
-        </a>
+      <div class="spread-tags">
+        <span class="tag">Sociedade</span>
+        <span class="tag">Design</span>
+        <span class="tag">Interação</span>
+      </div>
 
-        <div class="story">
-          <p><strong>Problema</strong><br>
-            Quando o layout é “certinho demais” não possui identidade, eu e meu grupo de tcc resolvemos deixar o projeto com personalidade.
-          </p>
+      <a href="https://projetomed.com.br/TECTI/2025/gp01/ecomarine/pages/"
+         target="_blank"
+         class="project-link-two project-link-glow"
+         rel="noreferrer">
+        Ver site ao vivo →
+      </a>
 
-          <p><strong>Ideia</strong><br>
-            Queríamos um visual único e com bordas arredondadas, um layout diferente das redes sociais comuns, mas sem virar bagunça.
-          </p>
+      <!-- STORY + FUMAÇA -->
+      <div class="story story--smoke" data-interval="7500" data-stop-after="24000">
+        <canvas class="smoke-canvas"></canvas>
 
-          <p><strong>Resultado</strong><br>
-            Um design editorial moderno: tem estrutura, tem movimento e ainda dá pra ler de boa.
-            É aquele equilíbrio entre “organizado” e “criativo”.
-          </p>
+        <div class="story-steps">
+          <div class="story-step is-active">
+            <p><strong>Problema</strong><br>
+              Quando o layout é “certinho demais” não possui identidade — fica com cara de “mais do mesmo”.
+            </p>
+          </div>
+
+          <div class="story-step">
+            <p><strong>Ideia</strong><br>
+              Criar um visual com personalidade, bordas arredondadas e hierarquia clara, sem virar bagunça.
+            </p>
+          </div>
+
+          <div class="story-step">
+            <p><strong>Resultado</strong><br>
+              Um design editorial moderno: tem estrutura, tem movimento e mantém a leitura leve.
+            </p>
+          </div>
         </div>
       </div>
-    </article>
+    </div>
+
+    <!-- AFTER (aparece depois) -->
+    <div class="after">
+      <p class="spread-topline">Contexto do projeto</p>
+      <h3 class="spread-name">Como foi construído essa rede social</h3>
+
+      <p class="after-text">
+        A EcoMarine é uma rede social que une cidadãos, ongs e empresas em um só lugar
+        com o objetivo de ajudar os oceanos e a vida marinha, foi um projeto construído
+        ao longo do meu terceiro ano do ensino médio técnico junto com meu grupo.
+        Desenvolvido com as linguagens: HTML, CSS, PHP, Javascript, MySql, e o uso de API'S, com 
+        protótipo desenvolvido no Figma.
+      </p>
+
+<p class="reveal-phrase">
+  Não se esqueça de dar uma olhada no site ao vivo! <3</p>
+
+
+    </div>
+  </div>
+</article>
+
+
+
+
 
   </section>
 
@@ -316,11 +420,30 @@
     </h2>
 
     <div class="contact-links">
-      <a href="mailto:larih.lm04@gmail.com">larih.lm04@gmail.com</a>
-      <a href="https://www.linkedin.com/in/larissa-l-ribeiro-92b3b1392" target="_blank" rel="noreferrer">LinkedIn</a>
-      <a href="https://github.com/larihlm04" target="_blank" rel="noreferrer">GitHub</a>
-    </div>
+  <a href="mailto:larih.lm04@gmail.com" class="contact-item">
+    <span class="contact-text">larih.lm04@gmail.com</span>
+    <i class="icon email"></i>
+  </a>
+
+  <a href="https://www.linkedin.com/in/larissa-l-ribeiro-92b3b1392"
+     target="_blank"
+     rel="noreferrer"
+     class="contact-item">
+    <span class="contact-text">LinkedIn</span>
+    <i class="icon linkedin"></i>
+  </a>
+
+  <a href="https://github.com/larihlm04"
+     target="_blank"
+     rel="noreferrer"
+     class="contact-item">
+    <span class="contact-text">GitHub</span>
+    <i class="icon github"></i>
+  </a>
+</div>
+
   </section>
+  
 
 </body>
 </html>
