@@ -1082,15 +1082,13 @@ html.has-open .card{ animation: none !important; }
   border-radius: 28px;
   overflow: hidden;
 }*/
-.flip-front img, .flip-back img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transform: scale(1.02);
+.flip-front img,
+.flip-back img{
+  object-fit: contain;  /* mostra tudo (pode sobrar borda) */
+  transform: none;
+  background: #000;     /* opcional, pra bordas ficarem elegantes */
 }
-.flip-back{ transform: rotateY(180deg); }
-.flip-card.is-flipped .flip-inner{ transform: rotateY(180deg); }
+
 
 /* ===================== SWAP (KORA) ===================== 
 .initial{ transition: opacity 450ms ease, transform 450ms ease; }
@@ -2943,4 +2941,44 @@ html.has-open .card{ animation: none !important; }
 }
 
 .endfx.is-out{ opacity: 0; }
+
+
+
+
+
+/* ===================== FIX ECO FLIP: tirar “zoom/aproximação” ===================== */
+
+/* 1) remove QUALQUER scale que tenha ficado aplicado */
+#ecoFlip img{
+  transform: none !important;
+}
+
+/* 2) NÃO corta a imagem (cover corta e parece zoom) */
+#ecoFlip .flip-front img,
+#ecoFlip .flip-back  img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;   /* <<< aqui é o segredo */
+  background: #000 !important;      /* borda preta elegante se sobrar espaço */
+}
+
+/* 3) garante que o container do flip não “esprema” a imagem */
+#ecoFlip{
+  width: 92%;
+  margin: 0 auto;
+  border-radius: 34px;
+  overflow: hidden;
+}
+
+#ecoFlip .flip-inner,
+#ecoFlip .flip-face{
+  border-radius: 34px;
+}
+
+
+
+
+
+
+
 
