@@ -3029,6 +3029,68 @@ html.has-open .card{ animation: none !important; }
 }
 
 
+/* garante que o bloco é o "container" do hover */
+.story-block{
+  position: relative !important;
+  overflow: hidden;
+}
+
+/* número visível por padrão */
+.story-big{
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease !important;
+}
+
+/* texto escondido por padrão (mas EXISTE e fica por cima) */
+.story-copy{
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  text-align: center !important;
+  padding: 10px 14px !important;
+
+  opacity: 0 !important;
+  transform: translateY(8px) !important;
+  filter: blur(8px) !important;
+
+  pointer-events: none !important;
+  z-index: 3 !important;
+
+  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease !important;
+}
+
+/* DESKTOP: hover */
+@media (hover: hover){
+  .story-block:hover .story-copy{
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    filter: blur(0) !important;
+    pointer-events: auto !important;
+  }
+
+  .story-block:hover .story-big{
+    opacity: 0 !important;
+    transform: translateY(-6px) !important;
+    filter: blur(6px) !important;
+  }
+}
+
+/* CELULAR/TOUCH: abre no toque (seu JS adiciona .is-open) */
+.story-block.is-open .story-copy{
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  filter: blur(0) !important;
+  pointer-events: auto !important;
+}
+
+.story-block.is-open .story-big{
+  opacity: 0 !important;
+  transform: translateY(-6px) !important;
+  filter: blur(6px) !important;
+}
+
 
 
 
