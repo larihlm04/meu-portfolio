@@ -2976,6 +2976,57 @@ html.has-open .card{ animation: none !important; }
 }
 
 
+/* ===========================
+   FIX FINAL — 01/02/03 LADO A LADO NO CELULAR
+   Cole no FINAL do CSS
+=========================== */
+
+/* sempre 3 colunas no desktop */
+.story-row{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(14px, 2vw, 28px) !important;
+  align-items: start !important;
+}
+
+/* NÃO deixa o mobile transformar em 1 coluna */
+@media (max-width: 900px){
+  .story-row{
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  /* garante que o bloco não fique “grande demais” e empurre */
+  .story-block{
+    min-height: 110px !important;
+  }
+
+  /* número grande mas sem estourar */
+  .story-big{
+    font-size: clamp(52px, 12vw, 86px) !important;
+  }
+
+  /* deixa o texto aparecer bem quando abrir (touch) */
+  .story-copy{
+    padding: 10px !important;
+  }
+}
+
+/* celular pequeno: ainda 3 colunas, mais compacto */
+@media (max-width: 520px){
+  .story-row{
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .story-block{
+    min-height: 96px !important;
+  }
+
+  .story-big{
+    font-size: clamp(48px, 14vw, 78px) !important;
+  }
+}
 
 
 
