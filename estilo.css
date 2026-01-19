@@ -1,0 +1,2984 @@
+/* ===================== RESET ===================== */
+*{ margin:0; padding:0; box-sizing:border-box; }
+
+:root{
+  --shadowFront: 0 26px 70px rgba(0,0,0,.18);
+  --shadowBack:  0 18px 60px rgba(0,0,0,.12);
+  --radius: 34px;
+}
+
+/* ===================== BASE ===================== */
+body{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+  background: #000;
+  color: #fff;
+}
+
+@font-face {
+  font-family: 'Athachantr';
+  src: url('../fonts/AthachantrTrial-Regular.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* ===================== HERO ===================== */
+.hero{
+  height: 22vh;
+  min-height: 140px;
+  background:#000;
+  display:flex;
+  align-items:flex-end;
+  padding: 24px 7vw;
+}
+
+.scatter{
+  color:#fff;
+  font-size: clamp(36px, 3.2vw, 48px);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 10px;
+  font-family: 'Athachantr', serif;
+  display: inline-block;
+}
+
+.scatter .ch{
+  display:inline-block;
+  opacity: 0;
+  transform: translate(var(--dx), var(--dy)) rotate(var(--dr));
+  filter: blur(6px);
+  transition:
+    transform 900ms cubic-bezier(.2,.9,.2,1),
+    opacity 900ms ease,
+    filter 900ms ease;
+  will-change: transform, opacity, filter;
+}
+
+.scatter.is-in .ch{
+  opacity: 1;
+  filter: blur(0);
+  transform: translate(0,0) rotate(0deg);
+}
+
+.hero-sub{
+  color: rgba(255,255,255,.70);
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+/* ===================== GRID QUEBRADO (DESKTOP) ===================== */
+.projects{
+  min-height: 240vh;
+  background: transparent;
+}
+
+.stage{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+/* camadas */
+.bg-card{ z-index: 1; }
+.card{ z-index: 10; }
+
+/* fundo */
+.bg-card{
+  position: absolute;
+  overflow: hidden;
+  border-radius: var(--radius);
+  box-shadow: var(--shadowBack);
+  will-change: transform;
+  pointer-events:none;
+  opacity: 1;
+}
+
+.bg-card img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display:block;
+  transform: scale(1.05);
+}
+
+/* ===================== CARD (BASE) ===================== */
+.card{
+  position: absolute;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: #000;
+  box-shadow: var(--shadowFront);
+  will-change: transform, opacity, filter;
+  transform-origin: center;
+  -webkit-tap-highlight-color: transparent;
+
+  /* estado "antes de aparecer" (desktop) */
+  opacity: 0;
+  filter: blur(12px);
+  transform: translate3d(0, 26px, 0) scale(.98);
+  transition: opacity .85s ease, filter .85s ease, transform .85s cubic-bezier(.2,.8,.2,1);
+
+  cursor: pointer;
+}
+
+/* quando JS marca como visível */
+.card.is-visible{
+  opacity: 1;
+  filter: blur(0);
+  transform: translate3d(0,0,0) scale(1);
+}
+
+.card img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.06);
+  transition: opacity .6s ease;
+}
+
+/* ===================== FLOATY (quando para de rolar) ===================== 
+html.is-idle .card{ animation: floaty 4.3s ease-in-out infinite; }
+html.is-scrolling .card{ animation: none; }
+
+@keyframes floaty{
+  0%,100%{ transform: translate3d(var(--mx,0px), calc(var(--my,0px) - 2px), 0) rotate(var(--mr,0deg)); }
+  50%    { transform: translate3d(var(--mx,0px), calc(var(--my,0px) + 7px), 0) rotate(var(--mr,0deg)); }
+}*/
+
+/* ===================== FLIP CARD ===================== */
+.card{ perspective: 1200px; }
+
+.card-inner{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius);
+  transform-style: preserve-3d;
+  transition: transform 650ms cubic-bezier(.2,.9,.2,1);
+}
+
+.card-face{
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+
+/* overlay só na frente */
+.card-front::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.55));
+  z-index: 1;
+}
+
+.meta{
+  position:absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 16px;
+  z-index: 2;
+  color:#fff;
+  display:flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 10px;
+}
+
+/* verso */
+.card-back{
+  transform: rotateY(180deg);
+  background: rgba(16,16,18,.92);
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 26px 70px rgba(0,0,0,.22);
+}
+
+.back-content{
+  height: 100%;
+  padding: 22px;
+  color: rgba(255,255,255,.92);
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+}
+
+.back-content p{
+  font-size: 25px;
+  line-height: 1.5;
+  opacity: .85;
+  max-width: 42ch;
+  font-family: 'Athachantr', serif;
+}
+
+.card.is-open{ z-index: 9999 !important; }
+.card.is-open .card-inner{ transform: rotateY(180deg); }
+
+@keyframes nudgeIn{
+  0%   { transform: translate3d(0, 10px, 0) scale(.98); }
+  60%  { transform: translate3d(0, -4px, 0) scale(1.01); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+.card.is-open{ animation: nudgeIn 520ms cubic-bezier(.2,.9,.2,1) 1; }
+html.has-open .card{ animation: none !important; }
+
+.card:focus-visible{ outline: 2px solid rgba(255,255,255,.35); outline-offset: 6px; }
+
+/* ===================== INTRO FULLSCREEN ===================== */
+.intro{
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  overflow: hidden;
+  background: #000;
+}
+
+.intro-bg{
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1);
+}
+
+.intro-overlay{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px 7vw;
+  background: radial-gradient(circle at 60% 40%, rgba(0,0,0,.15), rgba(0,0,0,.65));
+}
+
+.intro-content{
+  text-align: center;
+  color: #fff;
+  max-width: 720px;
+}
+
+.intro-kicker{
+  opacity: .8;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.intro-title{
+  font-size: clamp(44px, 7vw, 92px);
+  letter-spacing: -0.05em;
+  line-height: .95;
+  margin-bottom: 10px;
+  font-family: 'Athachantr', serif;
+}
+
+.intro-sub{
+  opacity: .75;
+  font-size: 14px;
+  margin-bottom: 12px;
+  padding-top:400px;
+}
+
+.intro-btn{
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.10);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform .2s ease, background .2s ease;
+}
+
+.intro-btn:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,.16);
+}
+
+.intro.is-leaving{
+  opacity: 0;
+  transition: opacity 700ms ease;
+  pointer-events: none;
+}
+
+.intro.is-leaving .intro-bg{
+  transform: scale(1);
+  transition: transform 900ms cubic-bezier(.2,.9,.2,1);
+}
+
+.intro.is-leaving .intro-overlay{
+  opacity: 0;
+  transition: opacity 520ms ease;
+}
+
+.intro.is-gone{ display: none; }
+
+
+/* ===================== INTRO RESPONSIVA ===================== */
+
+/* Tablet */
+@media (max-width: 900px){
+  .intro-overlay{
+    padding: 20px 6vw;
+    place-items: center;
+  }
+
+  .intro-content{
+    max-width: 560px;
+  }
+
+  .intro-title{
+    font-size: clamp(34px, 8vw, 58px);
+    line-height: 1.02;
+  }
+
+  /* remove esse empurrão gigante */
+  .intro-sub{
+    padding-top: 0 !important;
+    font-size: 14px;
+    margin-bottom: 16px;
+    font-family: 'Athachantr', serif;
+  }
+
+  .intro-btn{
+    padding: 12px 16px;
+  }
+}
+
+/* ===================== INTRO — CELULAR PEQUENO ===================== */
+@media (max-width: 520px){
+
+  .intro{
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* fundo ocupa tela toda */
+  .intro-bg{
+    inset: 0;
+    background-size: contain;       /* não corta */
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  /* conteúdo centralizado por cima do fundo */
+  .intro-overlay{
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px 6vw;
+    background: radial-gradient(circle at 60% 40%, rgba(0,0,0,.20), rgba(0,0,0,.75));
+  }
+
+  .intro-content{
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+  }
+
+  /* remove o empurrão gigante */
+  .intro-sub{
+    padding-top: 140px !important;
+    font-family: 'Athachantr', serif;
+  }
+
+  .intro-btn{
+    width: 100%;
+    max-width: 70px;
+  }
+}
+
+
+
+
+/* ===================== ABOUT ===================== */
+.about{
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 10vh 7vw;
+  background: transparent;
+}
+
+.about-inner{ max-width: 920px; width: 100%; }
+
+.about-text{
+  font-size: clamp(22px, 2.2vw, 30px);
+  line-height: 1.55;
+  max-width: 58ch;
+  color: rgba(216, 173, 173, 0.85);
+  font-family: 'Athachantr', serif;
+}
+
+/* ===================== DEPTH REVEAL ===================== */
+.depth-reveal{
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.depth-reveal .ch3d{
+  display: inline-block;
+  will-change: transform, opacity, filter;
+  opacity: 0;
+  filter: blur(10px);
+  transform: translate3d(var(--dx,0px), var(--dy,0px), var(--dz,-160px)) rotate(var(--dr,0deg));
+}
+
+.depth-reveal.is-in .ch3d{
+  animation: depthIn 900ms cubic-bezier(.2,.9,.2,1) forwards;
+  animation-delay: var(--delay, 0ms);
+}
+
+@keyframes depthIn{
+  0%{
+    opacity: 0;
+    filter: blur(12px);
+    transform: translate3d(var(--dx,0px), var(--dy,0px), var(--dz,-160px)) rotate(var(--dr,0deg));
+  }
+  100%{
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0px, 0px, 0px) rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .depth-reveal .ch3d{ opacity: 1; filter: none; transform: none; }
+  .depth-reveal.is-in .ch3d{ animation: none; }
+}
+
+/* ===================== EDITORIAL ===================== */
+.editorial{ padding: 12vh 7vw; background: transparent; }
+
+.editorial-head{
+  max-width: 980px;
+  margin: 0 auto 46px;
+}
+
+.editorial-sub{
+  color: rgba(255,255,255,.75);
+  line-height: 1.6;
+  font-size: 32px;
+  max-width: 70ch;
+  font-family: 'Athachantr', serif;
+}
+
+.spread{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(18px, 3vw, 44px);
+  align-items: center;
+  margin: 0 auto 64px;
+  max-width: 1100px;
+}
+
+.spread--reverse .spread-visual{ order: 2; }
+.spread--reverse .spread-text{ order: 1; }
+
+.spread-visual{
+  position: relative;
+  border-radius: 34px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.12);
+
+  /* maior + alinhado melhor */
+  width: 92%;
+  margin: 0 auto;
+
+  /* sombra mais bonita */
+  box-shadow:
+    0 40px 120px rgba(0,0,0,.55),
+    0 16px 40px rgba(0,0,0,.35);
+}
+
+/* sombra/overlay em cima da imagem (fica elegante) */
+.spread-visual::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  /* sombra no topo + vinheta leve nas bordas */
+  background:
+    linear-gradient(to bottom,
+      rgba(0,0,0,.55) 0%,
+      rgba(0,0,0,.08) 35%,
+      rgba(0,0,0,.18) 100%
+    ),
+    radial-gradient(circle at 50% 40%,
+      rgba(255,255,255,.08),
+      rgba(0,0,0,.35) 70%
+    );
+
+  opacity: .85;
+}
+
+
+.spread-visual img{
+  width: 100%;
+  height: clamp(340px, 62vh, 680px);
+  object-fit: cover;
+  display: block;
+  transform: scale(1.03);
+}
+
+/* ===================== REVEAL SPREAD VISUAL ===================== */
+.spread-visual{
+  opacity: 0;
+  filter: blur(10px);
+  transform: translate3d(0,0,0);
+  transition:
+    opacity 900ms ease,
+    transform 900ms cubic-bezier(.2,.9,.2,1),
+    filter 900ms ease;
+  will-change: transform, opacity, filter;
+}
+
+/* KORA: entra da esquerda */
+#spreadKora .spread-visual{
+  transform: translate3d(-70px, 0, 0);
+}
+
+/* EcoMarine: entra da direita */
+#spreadEco .spread-visual{
+  transform: translate3d(70px, 0, 0);
+}
+
+/* quando ativa */
+.spread.is-in .spread-visual{
+  opacity: 1;
+  filter: blur(0);
+  transform: translate3d(0,0,0);
+}
+
+/* opcional: micro “lift” pra ficar mais premium */
+.spread.is-in .spread-visual{
+  box-shadow:
+    0 40px 120px rgba(0,0,0,.55),
+    0 16px 40px rgba(0,0,0,.35);
+}
+
+
+
+.spread-caption{
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,.78);
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(8px);
+}
+
+.spread-topline{
+  color: rgba(255,255,255,.65);
+  font-size: 12px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  margin-top:0;
+}
+
+.spread-name{
+  color: #fff;
+  font-size: clamp(22px, 2.6vw, 34px);
+  letter-spacing: -0.03em;
+  margin-bottom: 12px;
+  font-family: 'Athachantr', serif;
+}
+
+.spread-tags{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.tag{
+  font-size: 12px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.82);
+}
+
+/* aplica em ambos os botões */
+.project-link-one,
+.project-link-two{
+  position: relative;          /* necessário pro ::after */
+  overflow: hidden;            /* recorta o brilho dentro do botão */
+  display: inline-block;
+  top: -90px;
+  left:220px;
+  padding: 20px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  color: rgba(216, 173, 173, 0.85);
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.05);
+  transition: transform .25s ease, background .25s ease;
+}
+
+/* mantém seus margin-left diferentes */
+.project-link-one{ margin-left: 70px; }
+.project-link-two{ margin-left: 50px; }
+
+/* hover certo */
+.project-link-one:hover,
+.project-link-two:hover{
+  background: rgba(255,255,255,.12);
+  transform: translateY(-2px);
+}
+
+/* classe que ativa o brilho (adicione no HTML) */
+.project-link-glow::after{
+  content: "";
+  position: absolute;
+  top: -70%;
+  left: -50%;
+  width: 45%;
+  height: 220%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(216,173,173,.45),
+    transparent
+  );
+  transform: rotate(20deg);
+  animation: shine 3.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes shine{
+  0%{ left: -50%; }
+  45%{ left: 130%; }
+  100%{ left: 130%; }
+}
+
+/* ===== ENTRA PRIMEIRO: imagem + texto do topo ===== 
+.spread-visual,
+.spread-text .initial > *:not(.story){
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(10px);
+  transition: opacity 900ms ease, transform 900ms cubic-bezier(.2,.9,.2,1), filter 900ms ease;
+}
+
+.spread.is-in .spread-visual,
+.spread.is-in .spread-text .initial > *:not(.story){
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* ===== STORY 01/02/03 (3 colunas, SEM SOBREPOR) ===== */
+.story{
+  margin-top: 22px;
+  width: 100%;
+}
+
+.story-row{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 28px);
+  align-items: start;
+}
+
+/* cada bloco 01/02/03 */
+.story-block{
+  position: relative;
+  text-align: center;
+  padding: 22px 10px 12px;
+
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(10px);
+  transition:
+    opacity 850ms ease,
+    transform 850ms cubic-bezier(.2,.9,.2,1),
+    filter 850ms ease;
+
+  /* entra depois do resto */
+  transition-delay: calc(900ms + (var(--i) * 160ms));
+}
+
+.spread.is-in .story-block{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* número grande suave */
+.story-big{
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Athachantr', serif;
+  font-size: clamp(54px, 6vw, 92px);
+  letter-spacing: .06em;
+  color: rgba(255,255,255,.06);
+  pointer-events: none;
+}
+
+/* título e subtítulo como no print */
+.story-title{
+  margin: 20px 0 10px;
+  font-family: 'Athachantr', serif;
+  font-size: 13px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.92);
+}
+
+.story-sub{
+  margin: 0 auto;
+  max-width: 34ch;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  line-height: 1.55;
+  color: rgba(255,255,255,.78);
+}
+
+/* linha */
+.story-line{
+  display: inline-block;
+  width: 44px;
+  height: 1px;
+  margin-top: 14px;
+  background: rgba(255,255,255,.22);
+}
+
+/* responsivo */
+@media (max-width: 900px){
+  .story-row{ grid-template-columns: 1fr; }
+  .story-block{ padding-top: 18px; }
+}
+
+
+/* ===================== TOOLS ===================== */
+.tools-icons{ padding: 10vh 7vw; text-align: center; }
+.tools-icons-head{ margin-bottom: 46px; }
+
+.tools-quote{
+  color: rgba(255,255,255,.85);
+  font-size: clamp(22px, 2.2vw, 36px);
+  letter-spacing: -0.02em;
+  max-width: 42ch;
+  margin: 0 auto;
+  line-height: 1.3;
+  font-family: 'Athachantr', serif;
+}
+
+.subtitle{ font-size: 22px; margin-top:10px; }
+
+.tools-icons-grid{
+  display: flex;
+  justify-content: center;
+  gap: clamp(18px, 3vw, 36px);
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 0;
+}
+
+.tool-icon{
+  position: relative;
+  width: 204px;
+  height: 204px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  border: 1px solid rgba(216, 173, 173, 0.85);
+  background: rgba(255,255,255,.04);
+  transition: transform .25s ease, background .25s ease;
+}
+
+.tool-icon img{
+  width: 106px;
+  height: 106px;
+  opacity: .85;
+}
+
+.tool-icon:hover{
+  transform: translateY(-4px);
+  background: rgba(255,255,255,.10);
+}
+
+.tool-icon::after{
+  content: attr(data-label);
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Athachantr', serif;
+  font-size: 18px;
+  color: rgba(255,255,255,.75);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.tool-icon:hover::after{ opacity: 1; }
+
+/* ===================== SKILLS ===================== */
+.skills-icons{ padding: 10vh 7vw; text-align: center; }
+
+.skills-icons-head{
+  margin-bottom: 40px;
+  max-width: 920px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.skills-kicker{
+  color: rgba(255,255,255,.55);
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.skills-title{
+  color: #fff;
+  font-size: clamp(24px, 3vw, 40px);
+  letter-spacing: -0.03em;
+  margin-bottom: 10px;
+}
+
+.skills-sub{
+  color: rgba(255,255,255,.72);
+  line-height: 1.6;
+  max-width: 60ch;
+  margin: 0 auto;
+  font-size: 15px;
+}
+
+.skills-icons-grid{
+  display: flex;
+  justify-content: center;
+  gap: clamp(16px, 2.6vw, 28px);
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* ===================== CONTATO ===================== */
+
+.contact{ padding: 12vh 7vw 14vh; text-align: center; }
+
+.contact-eyebrow{
+  color: rgba(255,255,255,.6);
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+
+.contact-title{
+  color: #fff;
+  font-size: clamp(28px, 3.4vw, 46px);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 32px;
+  font-family: 'Athachantr', serif;
+}
+
+/*.contact-links{
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.contact-links a{
+  color: rgba(255,255,255,.85);
+  text-decoration: none;
+  font-size: 15px;
+  border-bottom: 1px solid rgba(255,255,255,.3);
+  padding-bottom: 2px;
+  transition: all .25s ease;
+}
+
+.contact-links a:hover{
+  color: #fff;
+  border-color: #fff;
+}*/
+
+
+
+
+
+.contact-links{
+  display: flex;
+  gap: 48px;
+  justify-content: center;
+  margin-top: 40px;
+  font-family: 'Athachantr', serif;
+}
+
+.contact-item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: rgba(216, 173, 173, 0.85);
+  font-size: 14px;
+}
+
+.icon{
+  width: 22px;
+  height: 22px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: .95;
+}
+
+/* COR fixa no SVG: #D8ADAD = 216,173,173 */
+.icon.email{
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23D8ADAD' d='M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z'/%3E%3C/svg%3E");
+}
+
+.icon.linkedin{
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23D8ADAD' d='M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM.5 8h4V24h-4zM8.5 8h3.8v2.2h.05c.53-1 1.83-2.2 3.77-2.2C20.5 8 23 10.42 23 15.42V24h-4v-7.42c0-1.77-.04-4.05-2.47-4.05-2.47 0-2.85 1.93-2.85 3.92V24h-4z'/%3E%3C/svg%3E");
+}
+
+.icon.github{
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23D8ADAD' d='M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.38.6.11.82-.26.82-.58v-2.02c-3.34.73-4.04-1.61-4.04-1.61-.55-1.4-1.34-1.77-1.34-1.77-1.09-.75.08-.74.08-.74 1.2.08 1.83 1.23 1.83 1.23 1.07 1.84 2.8 1.31 3.48 1 .11-.78.42-1.31.76-1.61-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.23-3.22-.12-.3-.53-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 013-.4c1.02 0 2.04.14 3 .4 2.3-1.55 3.3-1.23 3.3-1.23.65 1.66.24 2.88.12 3.18.76.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.62-5.48 5.92.43.37.82 1.1.82 2.22v3.3c0 .32.22.7.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z'/%3E%3C/svg%3E");
+}
+
+
+
+
+/* ===================== RESPONSIVO ===================== */
+@media (max-width: 900px){
+  .spread{ grid-template-columns: 1fr; margin-bottom: 46px; }
+  .spread--reverse .spread-visual,
+  .spread--reverse .spread-text{ order: initial; }
+  .spread-visual img{ height: 320px; }
+}
+
+/* ===================== MOBILE (mantém grid quebrado) ===================== */
+@media (max-width: 750px){
+
+  /* hero sem empurrar pro lado */
+  .hero{
+    height: auto;
+    min-height: unset;
+    padding: 22px 6vw;
+    align-items: flex-start;
+  }
+
+  .hero-sub{
+    font-size: 16px;
+  }
+
+  /* mantém scroll “longo” pq o efeito depende disso */
+  .projects{
+    min-height: 220vh; /* pode ajustar: 200~260vh */
+    padding: 0;
+  }
+
+  /* palco continua “tela cheia” */
+  .stage{
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+  }
+
+  /* opcional: reduzir fundo no mobile (pesa menos) */
+  .bg-card{
+    opacity: .35;
+  }
+
+  :root{
+    --radius: 22px;
+  }
+
+  /* NÃO vira lista! mantém absolute */
+
+  .card{
+    position: absolute;
+    margin: 0;
+  }
+
+  /* sem floaty pra não “tremer” no mobile */
+  html.is-idle .card,
+  html.is-scrolling .card{
+    animation: none !important;
+  }
+}
+
+
+/* ===== (KORA) desce o texto da direita pra alinhar com a imagem ===== 
+#spreadKora #koraText{
+  padding-top: 64px; /* ajusta: 40px / 80px 
+}
+@media (max-width: 900px){
+  #spreadKora #koraText{ padding-top: 0; }
+}*/
+
+/* ===================== SMOKE STORY ===================== 
+.story--smoke{ position: relative; margin-top: 14px; overflow: visible; }
+.story--smoke canvas{
+  position: absolute;
+  inset: -40%;
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(6px);
+}
+.story-steps{ position: relative; min-height: 150px; z-index: 2; }
+.story-step{
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  filter: blur(14px);
+  transform: translateY(12px);
+  transition: opacity 1.8s ease, filter 1.8s ease, transform 1.8s ease;
+}
+.story-step.is-active{ opacity: 1; filter: blur(0); transform: translateY(0); }
+.story--smoke.is-hidden{
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 450ms ease, transform 450ms ease;
+}*/
+
+/* ===================== FLIP CARD ===================== */
+.spread-visual.flip-card{ height: clamp(10px, 52vh, 420px); }
+.flip-card{ perspective: 100px; }
+.flip-inner{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 900ms cubic-bezier(.2,.8,.2,1);
+}
+.flip-face{
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 28px;
+  overflow: hidden;
+}*/
+.flip-front img,
+.flip-back img{
+  object-fit: contain;  /* mostra tudo (pode sobrar borda) */
+  transform: none;
+  background: #000;     /* opcional, pra bordas ficarem elegantes */
+}
+
+
+/* ===================== SWAP (KORA) ===================== 
+.initial{ transition: opacity 450ms ease, transform 450ms ease; }
+.after{
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(8px);
+  pointer-events: none;
+  transition: opacity 550ms ease, transform 550ms ease, filter 550ms ease;
+  margin-top:-300px;
+}
+
+.initial{
+  margin-top:-50px;
+}
+
+.spread-text{
+  margin-top:120px;
+}
+
+
+
+.after-text{
+  color: rgba(255,255,255,.80);
+  line-height: 1.65;
+  font-size: 18px;
+  max-width: 62ch;
+  font-family: 'Athachantr', serif;
+  top: -50px;
+}*/
+
+/* some inicial 
+#spreadKora.is-swapped .initial{
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+/* mostra after 
+#spreadKora.is-swapped .after{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
+}*/
+
+/* ===================== MOVIMENTO (KORA vai pra direita) =====================
+#spreadKora .spread-visual{
+  transition: transform 900ms cubic-bezier(.2,.8,.2,1);
+}
+/* depois – deslocamento elegante 
+#spreadKora.move-right .spread-visual{
+  transform: translateX(80px); /* testa 40px / 60px / 80px 
+}
+
+#spreadKora.is-swapped .spread-visual{
+  transform: translateX(0);
+}*/
+
+/* depois do movimento, fixa com swap no grid 
+#spreadKora.is-swapped .spread-visual{ order: 2; }
+#spreadKora.is-swapped .spread-text{ order: 1; }
+
+*/
+
+
+
+/* ===================== (ECO) MOVE PRA DIREITA ===================== 
+#spreadEco .spread-visual{
+  transition: transform 900ms cubic-bezier(.2,.8,.2,1);
+}
+
+#spreadEco.move-right .spread-visual{
+  transform: translateX(80px); /* mesmo valor do KORA 
+}
+
+#spreadEco.is-swapped .spread-visual{
+  transform: translateX(0);
+}*/
+
+
+/* ===================== (ECO) SWAP: imagem fica na esquerda, texto na direita ===================== 
+/* movimento 
+#spreadEco .spread-visual{
+  transition: transform 700ms cubic-bezier(.2,.8,.2,1);
+}
+
+#spreadEco.move-right .spread-visual{
+  transform: translateX(40px);
+
+}
+
+/* texto 
+#spreadEco .after{
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(8px);
+  pointer-events: none;
+  transition: opacity 450ms ease, transform 450ms ease, filter 450ms ease;
+}
+
+#spreadEco.show-text .after{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
+}*/
+
+
+/* (opcional) se quiser alinhar melhor o texto com a imagem no EcoMarine também 
+@media (min-width: 901px){
+  #spreadEco #ecoText{
+    padding-top: 64px; /* se não quiser, apaga esse bloco 
+  }
+}
+
+#spreadEco.is-swapped .initial{
+  opacity: 0;
+  pointer-events: none;
+}
+
+#spreadEco.is-swapped .spread-visual{
+  transform: translateX(0); /* volta pro lugar 
+}
+*/
+
+/* ===================== ECO = IGUAL KORA ===================== 
+
+/* movimento pra direita (depois do flip) 
+#spreadEco .spread-visual{
+  transition: transform 900ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* IMPORTANTE: força o movimento aparecer 
+#spreadEco.move-right .spread-visual{
+  transform: translateX(80px) !important; /* pode testar 60px/100px 
+}
+
+/* quando assentar o swap, zera o transform 
+#spreadEco.is-swapped .spread-visual{
+  transform: translateX(0) !important;
+}
+
+/* texto novo (lado esquerdo depois do swap) 
+#spreadEco .after{
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(8px);
+  pointer-events: none;
+  transition: opacity 550ms ease, transform 550ms ease, filter 550ms ease;
+}
+
+#spreadEco .initial{
+  transition: opacity 450ms ease, transform 450ms ease;
+}
+
+#spreadEco.is-swapped .initial{
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+}
+
+#spreadEco.is-swapped .after{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
+}
+
+/* SWAP IGUAL KORA: texto vai pra ESQUERDA e imagem vai pra DIREITA 
+#spreadEco.is-swapped .spread-visual{ order: 2; }
+#spreadEco.is-swapped .spread-text{ order: 1; }*/
+
+
+@media (max-width: 768px){
+  .spread-text{
+    padding-top: 20px;
+  }
+}
+
+
+/* ===================== RESPONSIVO: KORA + ECO ===================== */
+
+/* Tablet / celular */
+@media (max-width: 900px){
+
+  /* vira 1 coluna */
+  .spread{
+    grid-template-columns: 1fr;
+    gap: 18px;
+    max-width: 720px;
+  }
+
+  /* imagem ocupa 100% */
+  .spread-visual{
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  /* altura da imagem/flip mais segura no mobile */
+  .spread-visual.flip-card{
+    height: 360px;
+  }
+  .flip-inner{
+    height: 360px;
+  }
+
+  /* remove deslocamento lateral (não faz sentido em 1 coluna) */
+  #spreadKora.move-right .spread-visual,
+  #spreadEco.move-right .spread-visual{
+    transform: translateX(0) !important;
+  }
+
+  /* remove swap de colunas no mobile (order não ajuda em 1 coluna) */
+  #spreadKora.is-swapped .spread-visual,
+  #spreadEco.is-swapped .spread-visual,
+  #spreadKora.is-swapped .spread-text,
+  #spreadEco.is-swapped .spread-text{
+    order: initial !important;
+  }
+
+  /* texto alinhado e com respiro */
+  .spread-text{
+    padding-top: 0 !important;
+  }
+
+
+  /* no mobile: quando swapped, esconde a parte inicial e mostra o after ABAIXO */
+  #spreadKora .after,
+  #spreadEco .after{
+    margin-top: 12px;
+  }
+
+  /* se você quiser que o botão/Tags sumam quando swapped (igual desktop) */
+  #spreadKora.is-swapped .spread-tags,
+  #spreadKora.is-swapped .project-link-one,
+  #spreadEco.is-swapped .spread-tags,
+  #spreadEco.is-swapped .project-link-two{
+    display: none;
+  }
+
+  /* fumaça mais leve no mobile (performance) */
+  .story--smoke canvas{
+    filter: blur(5px);
+    inset: -25%;
+  }
+
+  /* steps com mais altura pra não cortar texto */
+  .story-steps{
+    min-height: 170px;
+  }
+}
+
+/* Celular pequeno */
+@media (max-width: 520px){
+  .spread-visual.flip-card,
+  .flip-inner{
+    height: 300px;
+  }
+
+  .story p{
+    font-size: 16px;
+  }
+
+  .after-text{
+    font-size: 16px;
+  }
+
+  .spread-tags{
+    gap: 6px;
+  }
+
+  .tag{
+    font-size: 11px;
+    padding: 6px 9px;
+  }
+}
+
+
+/* Mobile/tablet: desce o texto do AFTER (Contexto do projeto) */
+@media (max-width: 900px){
+  #spreadKora .after{
+    margin-top: -18px;   /* aumenta/diminui aqui */
+  }
+
+  #spreadKora  .after-text{
+    margin-top: -8px;   /* ajusta aqui se quiser */
+  }
+
+  /* se ainda ficar colado, desce o bloco inteiro do texto */
+  #spreadKora .spread-text{
+    margin-top: 170px;  /* aumenta/diminui aqui */
+  }
+}
+
+/* ===================== MOBILE / TABLET – ECOMARINE ===================== */
+@media (max-width: 900px){
+
+  /* desce o texto AFTER (Contexto do projeto) */
+  #spreadEco .after{
+    margin-top: -28px;   /* ajusta aqui se quiser */
+  }
+
+  #spreadEco  .after-text{
+    margin-top: -8px;   /* ajusta aqui se quiser */
+  }
+  /* dá respiro no bloco de texto inteiro */
+  #spreadEco .spread-text{
+    margin-top: 170px;
+  }
+}
+
+
+/* ===================== REVEAL FRASE CONTEXTO ===================== */
+/* ===================== REVEAL FRASE (SEM JS) ===================== */
+.reveal-phrase{
+  margin-top: 18px;
+  color: rgba(255,255,255,.75);
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 60ch;
+  font-family: 'Athachantr', serif;
+
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(10px);
+
+  animation: phraseReveal 1.2s ease forwards;
+  animation-delay: 1.2s; /* tempo pra "aparecer depois" */
+}
+
+@keyframes phraseReveal{
+  to{
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* ===================== BASE CARDS (flip) ===================== */
+
+.stage{
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.card{
+  position: absolute;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+
+  /* transições suaves para mover/alinhares */
+  transition:
+    left 1.4s cubic-bezier(.2,.9,.2,1),
+    top  1.4s cubic-bezier(.2,.9,.2,1),
+    width 1.4s cubic-bezier(.2,.9,.2,1),
+    height 1.4s cubic-bezier(.2,.9,.2,1),
+    transform 1.2s cubic-bezier(.2,.9,.2,1),
+    opacity 1s ease,
+    filter 1s ease;
+}
+
+.card-inner{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 900ms cubic-bezier(.2,.9,.2,1);
+}
+
+.card-face{
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+
+.card-front{
+  z-index: 2;
+}
+
+.card-back{
+  transform: rotateY(180deg);
+  display: grid;
+  place-items: center;
+}
+
+.card.is-open .card-inner{
+  transform: rotateY(180deg);
+}
+
+.card-back .back-content{
+  padding: 18px;
+}
+
+.card-back p{
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgba(255,255,255,.9);
+}
+
+
+/* ===================== SEQUÊNCIA (flip geral) ===================== */
+
+.stage.is-seq .card-inner{
+  transform: rotateY(180deg);
+  transition: transform 1200ms cubic-bezier(.2,.9,.2,1);
+}
+
+
+/* ===================== MODO GRID (4x2 quadrados) ===================== */
+/* (ativa quando o JS adiciona .is-grid no stage) */
+
+.stage.is-grid .card{
+  border-radius: 34px; /* igual seu exemplo */
+  overflow: hidden;
+
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 18px 60px rgba(0,0,0,.45);
+  backdrop-filter: blur(10px);
+
+  opacity: 1 !important;
+  filter: none !important;
+
+  will-change: left, top, width, height, transform;
+}
+
+/* no modo grid: tira qualquer rotação aleatória */
+.stage.is-grid .card{
+  transform: translate3d(0,0,0) rotate(0deg) !important;
+}
+
+/* opcional: no grid você queria só “quadrados” */
+.stage.is-grid .card-front{
+  display: none !important;
+}
+.stage.is-grid .card-front::after{
+  display: none !important;
+}
+
+/* verso centralizado (sem texto) */
+.stage.is-grid .card-back{
+  display: grid !important;
+  place-items: center !important;
+  background: transparent !important;
+  border: 0 !important;
+}
+
+/* se NÃO quiser texto nenhum no grid */
+.stage.is-grid .card-back p{
+  display: none !important;
+}
+
+
+/* ===================== SUMIR CARDS ===================== */
+
+.stage.is-hide .card{
+  opacity: 0 !important;
+  transform: translate3d(0, 10px, 0) scale(.98) !important;
+  filter: blur(10px) !important;
+  pointer-events: none;
+  transition: opacity 700ms ease, transform 700ms ease, filter 700ms ease;
+}
+
+
+/* ===================== FRASE FINAL ===================== */
+
+.final-phrase{
+  position: absolute;
+  left: 50%;
+  top: 28%;
+  transform: translateX(-50%);
+  font-family: 'Athachantr', serif;
+  font-weight: 100;
+  font-size: clamp(30px, 4vw, 60px);
+  color: rgba(255,255,255,.92);
+  white-space: nowrap;
+
+  opacity: 0;
+  filter: blur(10px);
+  pointer-events: none;
+
+  transition: opacity 1.2s ease, filter 1.2s ease, transform 1.2s ease;
+  z-index: 999;
+}
+
+.stage.is-final #finalPhrase{
+  opacity: 1;
+  filter: blur(0);
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Mobile: não estoura */
+@media (max-width: 750px){
+  .final-phrase{
+    top: 32%;
+    white-space: normal;
+    max-width: 22ch;
+    text-align: center;
+  }
+}
+
+
+/* ===================== ORB (BOLINHA PREMIUM) ===================== */
+.orb{
+  position: absolute;
+  left: 0;
+  top: 0;
+
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+
+  /* corpo com “vidro + neon” */
+  background:
+    radial-gradient(circle at 28% 28%,
+      rgba(255,255,255,.95),
+      rgba(255,255,255,.30) 35%,
+      rgba(255,255,255,0) 62%
+    ),
+    radial-gradient(circle at 60% 70%,
+      rgba(255,120,210,.85),
+      rgba(255,80,190,.22) 55%,
+      rgba(255,80,190,0) 72%
+    );
+
+  /* glow bonito */
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.18) inset,
+    0 18px 55px rgba(255,80,190,.22),
+    0 10px 26px rgba(0,0,0,.40);
+
+  pointer-events: none;
+  opacity: 0;
+  z-index: 60;
+
+  transform: translate(-50%, -50%);
+  will-change: left, top, transform, opacity, filter;
+
+  /* brilho vivo */
+  animation: orbGlow 1.35s ease-in-out infinite;
+}
+
+/* “pulo” quando troca de card */
+.orb.is-hop{
+  animation:
+    orbHop 520ms cubic-bezier(.2,.9,.2,1) both,
+    orbGlow 1.35s ease-in-out infinite;
+}
+
+@keyframes orbGlow{
+  0%,100%{ filter: saturate(1) brightness(1); }
+  50%{ filter: saturate(1.2) brightness(1.08); }
+}
+
+@keyframes orbHop{
+  0%   { transform: translate(-50%,-50%) scale(.92); }
+  40%  { transform: translate(-50%,-64%) scale(1.08); }
+  100% { transform: translate(-50%,-50%) scale(1); }
+}
+
+/* ===================== TRAIL (RASTRO) ===================== */
+.orb-trail{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  pointer-events: none;
+  z-index: 59;
+
+  background: radial-gradient(circle,
+    rgba(255,120,210,.45),
+    rgba(255,120,210,.12) 55%,
+    rgba(255,120,210,0) 75%
+  );
+
+  transform: translate(-50%, -50%);
+  opacity: .9;
+  filter: blur(.2px);
+  animation: trailFade 900ms ease forwards;
+}
+
+@keyframes trailFade{
+  to{
+    opacity: 0;
+    transform: translate(-50%,-50%) scale(2.2);
+    filter: blur(4px);
+  }
+}
+
+/* ===================== CARD PULSE QUANDO CHEGA ===================== */
+.card.is-pulse{
+  animation: cardPulse 600ms ease-out both;
+}
+@keyframes cardPulse{
+  0%{ transform: translate3d(0,0,0) scale(1); }
+  40%{ transform: translate3d(0,0,0) scale(1.03); }
+  100%{ transform: translate3d(0,0,0) scale(1); }
+}
+
+
+/* ===== IMPACTO DE ENERGIA NO CARD ===== */
+.card::after{
+  content: "";
+  position: absolute;
+  inset: -25%;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle,
+      rgba(255,180,220,.55),
+      rgba(255,180,220,.28) 30%,
+      rgba(255,180,220,0) 65%
+    );
+  opacity: 0;
+  transform: scale(.6);
+  pointer-events: none;
+}
+
+.card.is-hit::after{
+  animation: cardPulse 600ms ease-out forwards;
+}
+
+@keyframes cardPulse{
+  0%{
+    opacity: 0;
+    transform: scale(.5);
+  }
+  30%{
+    opacity: 1;
+    transform: scale(1);
+  }
+  100%{
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+
+
+
+/* 1) no começo: esconde o AFTER e a STORY */
+.spread .after,
+.spread .story{
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(10px);
+  pointer-events: none;
+  transition:
+    opacity 900ms ease,
+    transform 900ms cubic-bezier(.2,.9,.2,1),
+    filter 900ms ease;
+}
+
+/* 2) quando a section entra, libera o AFTER primeiro */
+.spread.is-in .after{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
+  transition-delay: 700ms; /* tempo depois do initial */
+}
+
+/* 3) depois do AFTER, libera a STORY (01/02/03) */
+.spread.is-in .story{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
+  transition-delay: 1400ms; /* vem depois do contexto */
+}
+
+/* 4) os 3 blocos ainda têm delay individual */
+.spread.is-in .story-block{
+  transition-delay: calc(1600ms + (var(--i) * 180ms));
+}
+
+
+
+/* =========================================================
+   PATCH (coloque no FINAL do CSS)
+   - corrige conflitos sem mexer no resto
+   - garante ordem: initial -> after -> story
+   - corrige stage duplicado
+   - corrige @keyframes duplicado
+========================================================= */
+
+/* 1) STAGE: mantém o sticky do seu efeito (o stage "relative" de baixo estava sobrescrevendo) */
+.stage{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+/* 2) ORDEM CERTA: initial aparece primeiro (seu CSS não animava isso) */
+.spread .initial > *{
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(10px);
+  transition:
+    opacity 900ms ease,
+    transform 900ms cubic-bezier(.2,.9,.2,1),
+    filter 900ms ease;
+}
+
+.spread.is-in .initial > *{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  transition-delay: 0ms; /* entra primeiro */
+}
+
+/* 3) AFTER: já existe no seu CSS, mas garantimos que vem depois do initial */
+.spread.is-in .after{
+  transition-delay: 750ms; /* depois do initial */
+}
+
+/* 4) STORY: garante que vem depois do after */
+.spread.is-in .story{
+  transition-delay: 1400ms; /* depois do contexto */
+}
+
+/* 5) STORY-BLOCK: mantém o delay em cascata (depois que story aparece) */
+.spread.is-in .story-block{
+  transition-delay: calc(1600ms + (var(--i) * 180ms));
+}
+
+/* 6) KEYFRAMES: você tem 2 @keyframes cardPulse com nomes iguais
+      Isso quebra o pulse/hit. Vamos renomear o do HIT e ajustar o seletor. */
+
+/* mantém seu zoom do .is-pulse usando o cardPulse (o PRIMEIRO) */
+.card.is-pulse{
+  animation: cardPulse 600ms ease-out both;
+}
+
+/* renomeia o "hit" para não sobrescrever o pulse */
+.card.is-hit::after{
+  animation: cardHit 600ms ease-out forwards;
+}
+
+@keyframes cardHit{
+  0%{
+    opacity: 0;
+    transform: scale(.5);
+  }
+  30%{
+    opacity: 1;
+    transform: scale(1);
+  }
+  100%{
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+
+/* ===== FIX: número e texto não ficam um em cima do outro ===== */
+
+.story-block{
+  position: relative;
+  text-align: center;
+  min-height: 170px;
+  display: grid;
+  place-items: center; /* centraliza conteúdo */
+  padding: 22px 10px;
+}
+
+/* número no centro */
+.story-big{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  pointer-events: none;
+}
+
+/* texto também centralizado, mas escondido */
+.story-copy{
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 34ch;
+
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(10px);
+  pointer-events: none;
+  transition:
+    opacity 500ms ease,
+    transform 500ms cubic-bezier(.2,.9,.2,1),
+    filter 500ms ease;
+}
+
+/* hover: aparece texto, some número */
+.story-block:hover .story-copy{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
+}
+
+.story-block:hover .story-big{
+  opacity: 0;
+  filter: blur(6px);
+  transition: opacity 450ms ease, filter 450ms ease;
+}
+
+/* mobile: sem hover -> mostra texto sempre */
+@media (max-width: 900px){
+  .story-copy{
+    opacity: 1;
+    transform: none;
+    filter: none;
+    pointer-events: auto;
+  }
+  .story-big{
+    opacity: .10;
+    filter: none;
+  }
+}
+
+
+/* texto base */
+.after-text{
+  position: relative;
+  color: rgba(255,255,255,.78);
+  transition: color .35s ease;
+}
+
+/* detalhe escondido */
+.after-more{
+  display: block;
+  margin-top: 10px;
+  color: rgba(216,173,173,.85);
+  font-family: 'Athachantr', serif;
+
+  opacity: 0;
+  transform: translateY(6px);
+  filter: blur(6px);
+
+  transition:
+    opacity .35s ease,
+    transform .35s ease,
+    filter .35s ease;
+}
+
+/* hover FUNCIONAL */
+.after-text:hover{
+  color: rgba(255,255,255,.95);
+}
+
+.after-text:hover .after-more{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* mobile: não tem hover */
+@media (max-width: 900px){
+  .after-more{
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+
+
+
+
+/*base responsiva*/
+.spread{
+  overflow: visible;
+}
+
+.spread-text{
+  position: relative;
+  z-index: 2;
+}
+
+.spread-visual{
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- TABLET (<= 900px) ---------- */
+@media (max-width: 900px){
+
+  /* 1 coluna */
+  .spread{
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+    max-width: 780px;
+    margin: 0 auto 52px;
+    align-items: start;
+  }
+
+  /* imagem ocupa 100% */
+  .spread-visual{
+    width: 100% !important;
+    margin: 0 !important;
+    border-radius: 26px;
+  }
+
+  .spread-visual img{
+    height: clamp(280px, 48vh, 420px) !important;
+  }
+
+  /* entra “de baixo” no mobile/tablet (mais natural que lateral) */
+  #spreadKora .spread-visual,
+  #spreadEco  .spread-visual{
+    transform: translate3d(0, 26px, 0) !important;
+  }
+  .spread.is-in .spread-visual{
+    transform: translate3d(0, 0, 0) !important;
+  }
+
+  /* texto */
+  .spread-topline{
+    margin-top: 4px !important;
+  }
+
+  .spread-name{
+    font-size: clamp(22px, 5.2vw, 34px) !important;
+  }
+
+  /* tags e botão alinhados sem "margin-left" (evita quebrar layout) */
+  .spread-tags{
+    justify-content: flex-start;
+  }
+
+  .project-link-one,
+  .project-link-two{
+    margin-left: 0 !important;
+    margin-top: 12px;
+  }
+
+  /* ---------- sequência (inicial -> after -> story) ---------- */
+  /* inicial continua visível; AFTER e STORY entram depois */
+  .spread .after,
+  .spread .story{
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(10px);
+    pointer-events: none;
+  }
+
+  .spread.is-in .after{
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    pointer-events: auto;
+    transition-delay: 650ms;
+  }
+
+  .spread.is-in .story{
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+    pointer-events: auto;
+    transition-delay: 1200ms;
+  }
+
+  /* ---------- STORY 01/02/03 em 1 coluna (tablet) ---------- */
+  .story{
+    margin-top: 18px !important;
+  }
+
+  .story-row{
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    align-items: stretch;
+  }
+
+  .story-block{
+    padding: 18px 14px 16px !important;
+    text-align: left !important;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.05);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 16px 40px rgba(0,0,0,.35);
+  }
+
+  /* número grande vira “badge” mais legível no mobile */
+  .story-big{
+    position: absolute !important;
+    top: 10px !important;
+    right: 12px !important;
+    left: auto !important;
+    transform: none !important;
+    font-size: 18px !important;
+    letter-spacing: .18em;
+    color: rgba(255,255,255,.55) !important;
+  }
+
+  .story-title{
+    margin: 0 0 8px !important;
+    font-size: 12px !important;
+    letter-spacing: .18em !important;
+  }
+
+  .story-sub{
+    max-width: none !important;
+    font-size: 12px !important;
+    line-height: 1.55 !important;
+    letter-spacing: .06em !important;
+  }
+
+  .story-line{
+    width: 40px;
+    margin-top: 12px;
+  }
+
+  /* “Contexto” fica com leitura confortável */
+  .after-text{
+    font-size: 16px !important;
+    line-height: 1.7 !important;
+    max-width: 62ch !important;
+  }
+
+  /* frase final não estoura */
+  .reveal-phrase{
+    font-size: 16px !important;
+    max-width: 54ch !important;
+  }
+}
+
+
+
+/* =========================================================
+   MOBILE/TABLET — GARANTIR RESPONSIVO + STORY
+   (cole no FINAL do CSS)
+========================================================= */
+
+/* tablet e abaixo */
+@media (max-width: 900px){
+  .spread{
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+
+  .spread-visual{
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .spread-visual img{
+    height: 320px !important;
+  }
+
+  .spread-text{
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  /* story vira 1 coluna no mobile/tablet */
+  .story-row{
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* celular */
+@media (max-width: 520px){
+
+  .spread-topline{
+    top:20px;
+  }
+
+
+  /* texto do contexto mais confortável */
+  .after-text{
+    font-size: 14px !important;
+    line-height: 1.65 !important;
+  }
+
+  /* lista compacta */
+  .story{
+    margin-top: 14px !important;
+  }
+
+  .story-row{
+    gap: 10px !important;
+  }
+
+  .story-block{
+    padding: 14px 14px !important;
+    min-height: 74px !important;
+    height: auto !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    text-align: left !important;
+    border-radius: 16px !important;
+    background: rgba(255,255,255,.04) !important;
+    border: 1px solid rgba(255,255,255,.10) !important;
+    box-shadow: 0 14px 34px rgba(0,0,0,.32) !important;
+  }
+
+  /* se você usa .story-copy */
+  .story-copy{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    margin: 0 !important;
+  }
+
+  /* número no lado direito, discreto */
+  .story-big{
+    position: static !important;
+    transform: none !important;
+    font-size: 14px !important;
+    letter-spacing: .18em !important;
+    color: rgba(255,255,255,.28) !important;
+    margin-left: 12px !important;
+    flex: 0 0 auto !important;
+  }
+
+  .story-title{
+    margin: 0 !important;
+    font-size: 12px !important;
+    letter-spacing: .22em !important;
+    line-height: 1.1 !important;
+  }
+
+  /* se tiver frase longa, esconde no celular */
+  .story-sub{
+    display: none !important;
+  }
+
+  .story-line{
+    width: 34px !important;
+    margin-top: 2px !important;
+    opacity: .55 !important;
+  }
+}
+
+/* ===================== MOBILE: SEM HOVER -> mostra o texto automaticamente ===================== */
+@media (hover: none) and (pointer: coarse){
+  .story-copy{
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    pointer-events: auto !important;
+  }
+
+  .story-big{
+    opacity: .10 !important;   /* continua como marca d'água */
+  }
+}
+
+
+/* ===================== SEQUÊNCIA: after primeiro, depois 01/02/03 ===================== */
+
+/* esconde por padrão */
+.spread .after,
+.spread .story-row{
+  opacity: 0;
+  transform: translateY(14px);
+  filter: blur(10px);
+  pointer-events: none;
+  transition:
+    opacity 900ms ease,
+    transform 900ms cubic-bezier(.2,.9,.2,1),
+    filter 900ms ease;
+}
+
+/* quando entra: libera after primeiro */
+.spread.is-in .after{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
+  transition-delay: 520ms;
+}
+
+/* depois: libera os 3 blocos */
+.spread.is-in .story-row{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
+  transition-delay: 1100ms;
+}
+
+/* e cada bloco ainda entra em cascata */
+.spread.is-in .story-block{
+  transition-delay: calc(1200ms + (var(--i) * 160ms));
+}
+
+/* ===================== STORY: MOBILE = 3 colunas + texto só no toque ===================== */
+
+/* desfaz o "1 coluna" no mobile e deixa 3 em linha */
+@media (max-width: 520px){
+  .story-row{
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .story-block{
+    padding: 18px 10px 16px !important;
+    border-radius: 18px !important;
+    min-height: 110px;
+  }
+
+  /* número como destaque */
+  .story-big{
+    position: absolute !important;
+    top: 10px !important;
+    left: 12px !important;
+    transform: none !important;
+
+    font-size: 46px !important;
+    letter-spacing: .06em;
+    opacity: .16 !important;
+  }
+
+  /* some o texto por padrão (no mobile) */
+  .story-copy{
+    opacity: 0 !important;
+    transform: translateY(8px) !important;
+    filter: blur(10px) !important;
+    pointer-events: none !important;
+    transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+  }
+
+  /* quando tocar -> mostra o texto */
+  .story-block.is-open .story-copy{
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+    filter: blur(0) !important;
+    pointer-events: auto !important;
+  }
+
+  /* quando abrir, o número vira marca d'água mais suave */
+  .story-block.is-open .story-big{
+    opacity: .06 !important;
+  }
+
+  /* tipografia mais compacta */
+  .story-title{ font-size: 11px !important; letter-spacing: .16em !important; }
+  .story-sub{ font-size: 10px !important; line-height: 1.45 !important; letter-spacing: .06em !important; }
+  .story-line{ width: 32px !important; }
+}
+
+
+/* ===============================
+   STORY — SOMENTE NÚMEROS
+   (sem card, sem fundo)
+================================ */
+
+/* remove completamente o “card” */
+.story-block{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-height: auto !important;
+  cursor: default;
+}
+
+/* número grande (01 02 03) */
+.story-big{
+  position: relative;
+  display: block;
+  font-size: clamp(64px, 10vw, 120px);
+  font-family: 'Athachantr', serif;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.12);
+  transition: 
+    color 400ms ease,
+    transform 400ms ease,
+    opacity 400ms ease;
+}
+
+/* texto escondido por padrão */
+.story-copy{
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition:
+    opacity 420ms ease,
+    transform 420ms ease;
+}
+
+/* hover desktop */
+@media (hover: hover){
+  .story-block:hover .story-big{
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  .story-block:hover .story-copy{
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+/* mobile / touch (usa .is-open que seu JS já aplica) */
+.story-block.is-open .story-big{
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+.story-block.is-open .story-copy{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* títulos e texto */
+.story-title{
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.story-sub{
+  max-width: 26ch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255,255,255,.8);
+}
+
+.story-line{
+  display: inline-block;
+  width: 44px;
+  height: 1px;
+  margin-top: 14px;
+  background: rgba(255,255,255,.22);
+}
+
+/* responsivo: no mobile vira 1 coluna (fica elegante e legível) */
+@media (max-width: 900px){
+  .story-row{ grid-template-columns: 1fr; }
+  .story-block{ padding: 20px 14px 16px; }
+  .story-big{ font-size: 72px; }
+}
+
+
+/*deu certo esse*/
+/* =========================================================
+   FIX NUMEROS 01/02/03: sem card, sem borda, sem sobrepor
+   - Mostra só os números
+   - Texto aparece no hover (e some ao sair)
+   - No touch: usa .is-open (seu JS já adiciona)
+========================================================= */
+
+/* grid 3 colunas no desktop */
+@media (min-width: 901px){
+  .story-row{
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: clamp(26px, 4vw, 64px) !important;
+    align-items: center !important;
+  }
+}
+
+/* 1 coluna no mobile */
+@media (max-width: 900px){
+  .story-row{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+}
+
+/* cada slot */
+.story-block{
+  /* REMOVE “card” visual */
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+
+  /* garante área pro número não colapsar */
+  position: relative !important;
+  min-height: 120px;
+  padding: 0 !important;
+
+  display: grid !important;
+  place-items: center !important;
+}
+
+/* NÚMERO: deixa de ser absolute (isso evita sobreposição) */
+.story-big{
+  position: static !important;
+  inset: auto !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+
+  display: block;
+  font-family: 'Athachantr', serif;
+  font-size: clamp(56px, 7vw, 96px);
+  letter-spacing: .06em;
+  color: rgba(255,255,255,.10);
+  pointer-events: none;
+
+  transition: opacity .35s ease, transform .35s ease, filter .35s ease;
+}
+
+/* TEXTO: escondido por padrão */
+.story-copy{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 10px 14px;
+
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(10px);
+  pointer-events: none;
+
+  transition: opacity 420ms ease, transform 420ms ease, filter 420ms ease;
+}
+
+/* aparece no hover */
+.story-block:hover .story-copy{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
+}
+
+/* quando o texto aparece, o número “recuo” */
+.story-block:hover .story-big{
+  opacity: .06;
+  transform: scale(.98);
+}
+
+/* TOUCH: seu JS usa .is-open, então damos suporte */
+.story-block.is-open .story-copy{
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  pointer-events: auto;
+}
+.story-block.is-open .story-big{
+  opacity: .06;
+  transform: scale(.98);
+}
+
+/* se você tiver linha/título/sub e não quiser, pode ajustar aqui */
+.story-title{ margin: 0 0 10px; }
+.story-sub{ margin: 0; }
+.story-line{ display: none; } /* opcional */
+
+
+
+
+
+
+
+
+/*deu certo também*/
+
+/* garante que a linha 01/02/03 fica alinhada */
+.story-row{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(14px, 2vw, 28px) !important;
+  align-items: start !important;
+}
+
+/* bloco sem "card" visível (sem borda/caixa) */
+.story-block{
+  position: relative !important;
+  padding: 22px 10px 12px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+/* NÚMEROS GRANDES (estado inicial) */
+.story-big{
+  position: relative !important;       /* evita sobreposição estranha */
+  display: block !important;
+  text-align: center !important;
+
+  font-family: 'Athachantr', serif !important;
+  font-size: clamp(72px, 6.5vw, 120px) !important;  /* <<< maior */
+  letter-spacing: .06em !important;
+
+  color: rgba(255,255,255,.10) !important;
+  opacity: 1 !important;
+
+  transform: none !important;
+  filter: none !important;
+  transition: opacity 260ms ease, transform 260ms ease !important;
+}
+
+/* TEXTO escondido por padrão (sem blur pra não ficar "embaçado") */
+.story-copy{
+  opacity: 0 !important;
+  transform: translateY(10px) !important;
+  filter: none !important;             /* <<< tira blur */
+  transition: opacity 260ms ease, transform 260ms ease !important;
+
+  text-align: center !important;
+  margin-top: 8px !important;
+  pointer-events: none !important;
+}
+
+/* Hover: some o número e aparece o texto limpo */
+.story-block:hover .story-big{
+  opacity: 0 !important;
+  transform: translateY(-6px) !important;
+}
+
+.story-block:hover .story-copy{
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+}
+
+/* Mobile: sem hover → abre no click (JS adiciona .is-open) */
+.story-block.is-open .story-big{
+  opacity: 0 !important;
+  transform: translateY(-6px) !important;
+}
+.story-block.is-open .story-copy{
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
+}
+
+/* Tablet */
+@media (max-width: 900px){
+  .story-big{
+    font-size: clamp(64px, 10vw, 110px) !important;
+  }
+}
+
+/* Celular: vira 1 coluna e números continuam grandes */
+@media (max-width: 520px){
+  .story-row{
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+  .story-big{
+    font-size: 86px !important;
+  }
+  .story-copy{
+    margin-top: 0 !important;
+  }
+}
+
+
+
+
+
+/* =========================================================
+   UX HIGHLIGHT — FRASE AFTER (.after-more)
+========================================================= */
+
+.after-more{
+  position: relative;
+  display: inline-block;
+
+  margin-top: 14px;
+
+  font-size: 15px;
+  line-height: 1.65;
+  letter-spacing: .02em;
+
+  color: rgba(255,180,200,.75); /* rosa editorial */
+  cursor: default;
+
+  transition:
+    color 260ms ease,
+    text-shadow 260ms ease;
+}
+
+/* linha editorial sutil */
+.after-more::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+
+  width: 100%;
+  height: 1px;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,180,200,.6),
+    transparent
+  );
+
+  opacity: .35;
+  transform: scaleX(.4);
+  transform-origin: center;
+
+  transition:
+    opacity 260ms ease,
+    transform 260ms ease;
+}
+
+/* ===== HOVER — desktop ===== */
+@media (hover: hover){
+  .after-more:hover{
+    color: rgba(255,200,215,.95);
+    text-shadow:
+      0 0 12px rgba(255,180,200,.35),
+      0 0 28px rgba(255,180,200,.15);
+  }
+
+  .after-more:hover::after{
+    opacity: .9;
+    transform: scaleX(1);
+  }
+}
+
+/* ===== MOBILE / TOUCH ===== */
+@media (hover: none){
+  .after-more{
+    color: rgba(255,190,205,.85);
+  }
+
+  .after-more::after{
+    display: none;
+  }
+}
+
+
+
+/*deu certo*/
+/* =========================
+   DESGRUDAR TEXTO DA IMAGEM
+   (KORA / EcoMarine)
+   Cole no FINAL do CSS
+========================= */
+
+/* DESKTOP: desce o bloco de texto */
+@media (min-width: 901px){
+  #spreadKora .spread-text{
+    padding-top: 60px !important;  /* ajusta aqui: 40 / 60 / 80 */
+  }
+
+  /* se quiser também no EcoMarine */
+  #spreadEco .spread-text{
+    padding-top: 60px !important;
+  }
+}
+
+/* TABLET/MOBILE: mantém mais leve pra não estourar */
+@media (max-width: 900px){
+  #spreadKora .spread-text,
+  #spreadEco  .spread-text{
+    padding-top: 38px !important;  /* ajusta aqui: 12 / 18 / 24 */
+  }
+
+  .project-link-one {
+    left:300px;
+  }
+
+  .project-link-two {
+    left:300px;
+  }
+}
+
+
+
+/* =========================
+   FINAL: frase dissolve (rápido e suave)
+========================= */
+
+/* ===================== END SCREEN — QUADRADO EXPANDE ATÉ TELA TODA ===================== */
+/* ===================== END FX (MINIMO FUNCIONAL) ===================== */
+/* ===================== END FX (LIMPO E FUNCIONA) ===================== */
+.endfx{
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.endfx.is-on{ opacity: 1; }
+
+/* painel quadrado -> fullscreen */
+.endfx-panel{
+  position: relative;
+  width: min(420px, 80vw);
+  height: min(420px, 80vw);
+  border-radius: 34px;
+
+  background: rgba(10,10,10,.98);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 40px 140px rgba(0,0,0,.75);
+
+  overflow: hidden;
+
+  transform: scale(.05);
+  opacity: 0;
+
+  will-change: transform, opacity, width, height, border-radius;
+  display: grid;
+  place-items: center;
+}
+
+/* ativa */
+.endfx.is-on .endfx-panel{
+  animation: endPanelIn 520ms cubic-bezier(.2,.9,.2,1) forwards;
+}
+
+@keyframes endPanelIn{
+  0%   { transform: scale(.05); opacity: 0; border-radius: 34px; }
+  60%  { transform: scale(1);   opacity: 1; border-radius: 34px; }
+  100% { transform: scale(1);   opacity: 1; width: 100vw; height: 100vh; border-radius: 0; }
+}
+
+/* conteúdo (texto + imagem) — MOVE OS DOIS JUNTOS */
+.endfx-content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+
+  transform: translateY(50px); /* <<< aqui você desce tudo junto */
+}
+
+/* texto central */
+.endfx-text{
+  position: relative;
+  text-align: center;
+  user-select: none;
+
+  font-family: 'Athachantr', serif;
+  font-size: clamp(36px, 3.6vw, 54px);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: rgba(95, 16, 16, 0.92);
+}
+
+/* GLITCH copies */
+.endfx-text::before,
+.endfx-text::after{
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.endfx-text::before{ color: rgba(255,255,255,.85); }
+.endfx-text::after { color: rgba(255,255,255,.55); }
+
+/* scanlines suaves */
+.endfx-panel::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  opacity: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,.06) 0px,
+    rgba(255,255,255,.06) 1px,
+    transparent 2px,
+    transparent 6px
+  );
+  mix-blend-mode: overlay;
+  pointer-events:none;
+}
+
+/* glitch */
+.endfx.is-glitch .endfx-panel::after{ opacity: .25; }
+
+.endfx.is-glitch .endfx-text{
+  animation: glitchJitter 420ms steps(2,end) both;
+  text-shadow:
+    0 0 16px rgba(255,255,255,.14),
+    0 0 40px rgba(255,255,255,.08);
+}
+
+@keyframes glitchJitter{
+  0%{transform:translate(0,0) skewX(0deg); filter:blur(0);}
+  10%{transform:translate(-2px,1px) skewX(2deg);}
+  20%{transform:translate(3px,-1px) skewX(-2deg);}
+  35%{transform:translate(-4px,0px) skewX(1deg); filter:blur(.6px);}
+  55%{transform:translate(2px,2px) skewX(-1deg);}
+  75%{transform:translate(-1px,-2px) skewX(2deg); filter:blur(.3px);}
+  100%{transform:translate(0,0) skewX(0deg); filter:blur(0);}
+}
+
+.endfx.is-glitch .endfx-text::before,
+.endfx.is-glitch .endfx-text::after{
+  opacity: 1;
+  animation: glitchSlices 420ms steps(2,end) both;
+}
+
+.endfx.is-glitch .endfx-text::before{ transform: translate(-2px,0); }
+.endfx.is-glitch .endfx-text::after { transform: translate( 2px,0); opacity: .75; }
+
+@keyframes glitchSlices{
+  0%{clip-path: inset(0 0 0 0);}
+  16%{clip-path: inset(10% 0 72% 0);}
+  32%{clip-path: inset(55% 0 18% 0);}
+  48%{clip-path: inset(22% 0 52% 0);}
+  64%{clip-path: inset(68% 0 12% 0);}
+  80%{clip-path: inset(38% 0 38% 0);}
+  100%{clip-path: inset(0 0 0 0);}
+}
+
+/* assinatura */
+.endfx-signature{
+  width: clamp(120px, 18vw, 240px);
+  height: auto;
+  opacity: 0;
+  transform: translateY(14px) scale(.96);
+  transition: opacity 700ms ease, transform 700ms ease;
+  transition-delay: 220ms;
+  filter: drop-shadow(0 18px 40px rgba(0,0,0,.45));
+}
+
+.endfx.is-on .endfx-signature{
+  opacity: .85;
+  transform: translateY(0) scale(1);
+}
+
+/* saída */
+.endfx.is-out .endfx-panel{
+  animation: endOut 520ms cubic-bezier(.2,.9,.2,1) forwards;
+}
+
+@keyframes endOut{
+  0%{transform:scale(1); opacity:1; filter:blur(0);}
+  35%{transform:scale(1.02); filter:blur(1px);}
+  100%{transform:scale(.86); opacity:0; filter:blur(10px);}
+}
+
+.endfx.is-out{ opacity: 0; }
+
+
+
+
+
+/* ===================== FIX ECO FLIP: tirar “zoom/aproximação” ===================== */
+
+/* 1) remove QUALQUER scale que tenha ficado aplicado */
+#ecoFlip img{
+  transform: none !important;
+}
+
+/* 2) NÃO corta a imagem (cover corta e parece zoom) */
+#ecoFlip .flip-front img,
+#ecoFlip .flip-back  img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;   /* <<< aqui é o segredo */
+  background: #000 !important;      /* borda preta elegante se sobrar espaço */
+}
+
+/* 3) garante que o container do flip não “esprema” a imagem */
+#ecoFlip{
+  width: 92%;
+  margin: 0 auto;
+  border-radius: 34px;
+  overflow: hidden;
+}
+
+#ecoFlip .flip-inner,
+#ecoFlip .flip-face{
+  border-radius: 34px;
+}
+
+
+
+
+
+
+
+
