@@ -943,3 +943,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+
+
+// ===================== STORY 01/02/03 — TOQUE (mobile) =====================
+document.addEventListener("DOMContentLoaded", () => {
+  const blocks = document.querySelectorAll(".story-block");
+  if (!blocks.length) return;
+
+  blocks.forEach((b) => {
+    b.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+      // toggle: abre/fecha
+      const willOpen = !b.classList.contains("is-open");
+
+      // fecha todos
+      blocks.forEach((x) => x.classList.remove("is-open"));
+
+      // abre só o clicado
+      if (willOpen) b.classList.add("is-open");
+    });
+  });
+
+  // tocar fora fecha tudo
+  document.addEventListener("click", () => {
+    blocks.forEach((x) => x.classList.remove("is-open"));
+  });
+});

@@ -3091,6 +3091,13 @@ html.has-open .card{ animation: none !important; }
   filter: blur(6px) !important;
 }
 
+/* garante que dá pra tocar/clicar no bloco */
+.story-block{
+  pointer-events: auto !important;
+  cursor: pointer;
+}
+
+
 
 
 
