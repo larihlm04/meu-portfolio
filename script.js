@@ -33,13 +33,13 @@ function preload(src){
   });
 }
 
-/* ===================== REVEAL (cards) ===================== */
+/* ===================== REVEAL (cards) ===================== 
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("is-visible"); });
 }, { threshold: 0.12 });
-cards.forEach(c => io.observe(c));
+cards.forEach(c => io.observe(c));*/
 
-/* ===================== FUNDO (BG shuffle) ===================== */
+/* ===================== FUNDO (BG shuffle) ===================== 
 const BG_SLOTS = [
   { x: -18, y: -12, w: 78, h: 92, r: -6 },
   { x:  40, y: -10, w: 80, h: 94, r:  5 },
@@ -64,7 +64,7 @@ function applyBgMap(map1, map2, t){
     el.style.height = lerp(s1.h, s2.h, t) + "%";
     el.style.transform = `rotate(${lerp(s1.r, s2.r, t)}deg)`;
   });
-}
+}*/
 
 /* ===================== PROGRESSO (0..1) ===================== */
 function getProgress(){
@@ -90,14 +90,14 @@ setState(false);
    - Desktop: SLOTS_DESKTOP
    - Tablet : SLOTS_TABLET
    - Mobile : SLOTS_MOBILE (continua quebrado!)
-========================================================= */
+========================================================= 
 const mqMobile = window.matchMedia("(max-width: 750px)");
 const mqTablet = window.matchMedia("(max-width: 1024px)");
 
 function isMobileGrid(){ return mqMobile.matches; }
 function isTabletGrid(){ return mqTablet.matches; }
 
-/* slots desktop */
+/* slots desktop 
 const SLOTS_DESKTOP = [
   { x:  0, y: 28, w: 40, h: 52, z: 12, r: -2 },
   { x: 62, y: 12, w: 36, h: 62, z: 11, r:  2 },
@@ -107,7 +107,7 @@ const SLOTS_DESKTOP = [
   { x:  6, y:  8, w: 20, h: 18, z: 10, r:  2 },
 ];
 
-/* slots tablet */
+/* slots tablet 
 const SLOTS_TABLET = [
   { x:  4, y: 22, w: 48, h: 52, z: 12, r: -1 },
   { x: 52, y: 10, w: 44, h: 60, z: 11, r:  1 },
@@ -117,7 +117,7 @@ const SLOTS_TABLET = [
   { x:  8, y:  6, w: 24, h: 18, z: 10, r:  1 },
 ];
 
-/* ✅ slots mobile (continua grid quebrado, mas tudo cabe) */
+/* ✅ slots mobile (continua grid quebrado, mas tudo cabe) 
 const SLOTS_MOBILE = [
   { x:  6, y:  8, w: 44, h: 26, z: 12, r: -2 }, // topo-esq
   { x: 52, y:  6, w: 42, h: 30, z: 11, r:  2 }, // topo-dir
@@ -133,7 +133,7 @@ function getSlots(){
   return SLOTS_DESKTOP;
 }
 
-/* mapas */
+/* mapas 
 const MAP_A = [0,1,2,3,4,5];
 const MAP_B = [1,0,3,2,5,4];
 const MAP_C = [2,3,1,5,0,4];
@@ -164,8 +164,8 @@ function applyMap(map1, map2, t){
   });
 }
 
-/* render único (BG + FG) */
-function renderGrid(){
+/* render único (BG + FG) 
+function renderGrid(){Gr
   const p = getProgress();
 
   // BG (pode manter no mobile, fica bonito. Se pesar, dá pra desativar aqui.)
@@ -177,7 +177,7 @@ function renderGrid(){
   else         applyMap(MAP_B, MAP_C, (p - 0.5) / 0.5);
 }
 
-/* scroll otimizado (único) */
+/* scroll otimizado (único) 
 let ticking = false;
 
 addEventListener("scroll", () => {
@@ -194,13 +194,13 @@ addEventListener("scroll", () => {
   }
 }, { passive:true });
 
-/* resize: recalcula */
+/* resize: recalcula 
 addEventListener("resize", () => {
   renderGrid();
 }, { passive:true });
 
-/* init */
-renderGrid();
+/* init 
+renderGrid();*/
 
 /* ===================== HERO TEXT EFFECTS ===================== */
 /* --- TextScramble (só se existir #scrambleText) --- */
@@ -548,260 +548,398 @@ function buildDepthText(el, {
   els.forEach(el => obs.observe(el));
 })();
 
+
+
 document.addEventListener("DOMContentLoaded", () => {
+  const stage = document.getElementById("stage");
+  const cards = [...document.querySelectorAll(".card")];
+  const orb = stage?.querySelector(".orb");
+  const finalPhrase = document.getElementById("finalPhrase");
 
-  const spreadKora = document.getElementById("spreadKora");
-  const flipKora   = document.getElementById("koraFlip");
-  const story      = document.querySelector("#spreadKora .story--smoke");
+  if (!stage || cards.length === 0 || !orb || !finalPhrase) return;
 
-  if (!spreadKora || !flipKora || !story) return;
+  // ========= CONFIG =========
+  const COLS = 4;
+  const ROWS = 2;
+  const GRID_DELAY  = 1200;
+  const ORB_START   = 2200;
+  const HIDE_DELAY  = 6200;
+  const FINAL_DELAY = 7200;
+  const HOP_GAP     = 520;
 
-  const canvas = story.querySelector(".smoke-canvas");
-  const ctx = canvas?.getContext("2d");
-  const steps = [...story.querySelectorAll(".story-step")];
+  // ========= 1) START “EMBARALHADO” =========
+  function randomStartLayout(){
+    cards.forEach((card) => {
+      const w = 18 + Math.random() * 22;
+      const h = 18 + Math.random() * 28;
+      const x = Math.random() * (100 - w);
+      const y = Math.random() * (100 - h);
 
-  if (!canvas || !ctx || steps.length === 0) return;
+      card.style.left = x + "%";
+      card.style.top = y + "%";
+      card.style.width = w + "%";
+      card.style.height = h + "%";
+      card.style.zIndex = String(10 + Math.floor(Math.random() * 10));
+      card.style.transform =
+        `translate3d(0,0,0) rotate(${(-6 + Math.random()*12).toFixed(2)}deg)`;
 
-  /* ===== canvas smoke ===== */
-  let w, h;
-  function resize(){
-    w = canvas.width  = Math.max(1, Math.floor(story.offsetWidth  * 1.8));
-    h = canvas.height = Math.max(1, Math.floor(story.offsetHeight * 1.8));
+      card.classList.add("is-visible");
+      card.style.opacity = "1";
+    });
   }
-  resize();
-  window.addEventListener("resize", resize);
+  randomStartLayout();
 
-  const particles = [];
-  const COUNT = 24;
-
-  function reset(p){
-    p.x = Math.random() * w;
-    p.y = Math.random() * h;
-    p.r = 90 + Math.random() * 180;
-    p.vx = -0.15 + Math.random() * 0.25;
-    p.vy = -0.06 + Math.random() * 0.12;
-    p.a = 0.006 + Math.random() * 0.01;
+  // ========= helpers px =========
+  function capturePositionsPx(){
+    const stageRect = stage.getBoundingClientRect();
+    return cards.map(card => {
+      const r = card.getBoundingClientRect();
+      return { left: r.left - stageRect.left, top: r.top - stageRect.top, w: r.width, h: r.height };
+    });
   }
 
-  for(let i=0;i<COUNT;i++){
-    const p = {};
-    reset(p);
-    particles.push(p);
+  function applyPxPositions(pos){
+    cards.forEach((card, i) => {
+      card.style.left   = pos[i].left + "px";
+      card.style.top    = pos[i].top  + "px";
+      card.style.width  = pos[i].w    + "px";
+      card.style.height = pos[i].h    + "px";
+      card.style.zIndex = "50";
+      card.style.transform = "translate3d(0,0,0)";
+    });
   }
 
-  function draw(){
-    ctx.clearRect(0,0,w,h);
-    for(const p of particles){
-      const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
-      g.addColorStop(0, `rgba(255,255,255,${p.a})`);
-      g.addColorStop(1, `rgba(255,255,255,0)`);
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fill();
+  // ========= 2) GRID 4x2 =========
+  function gridPositions(){
+    const stageRect = stage.getBoundingClientRect();
+    const gap = 18;
 
-      p.x += p.vx; p.y += p.vy;
-      if(p.x < -p.r) p.x = w + p.r;
-      if(p.y < -p.r) p.y = h + p.r;
-      if(p.y > h + p.r) p.y = -p.r;
+    const maxW = stageRect.width  - gap * (COLS + 1);
+    const maxH = stageRect.height - gap * (ROWS + 1);
+
+    const size = Math.min(220, Math.floor(maxW / COLS), Math.floor(maxH / ROWS));
+
+    const gridW = (size * COLS) + gap * (COLS - 1);
+    const gridH = (size * ROWS) + gap * (ROWS - 1);
+
+    const startX = (stageRect.width  - gridW) / 2;
+    const startY = (stageRect.height - gridH) / 2;
+
+    return cards.map((_, i) => {
+      const col = i % COLS;
+      const row = Math.floor(i / COLS);
+      return {
+        left: startX + col * (size + gap),
+        top:  startY + row * (size + gap),
+        w: size,
+        h: size
+      };
+    });
+  }
+
+  // ========= 3) ORDEM ZIG-ZAG =========
+  function zigzagOrder(){
+    return [0,1,2,3,7,6,5,4].filter(i => i < cards.length);
+  }
+
+  // ========= 4) LIMITAR A ORB DENTRO DO CARD =========
+  function orbPosInsideCard(card){
+    const stageRect = stage.getBoundingClientRect();
+    const r = card.getBoundingClientRect();
+
+    const ow = orb.offsetWidth  || 28;
+    const oh = orb.offsetHeight || 28;
+
+    const pad = 10;
+
+    const leftMin = (r.left - stageRect.left) + pad + ow/2;
+    const leftMax = (r.right - stageRect.left) - pad - ow/2;
+
+    const topMin  = (r.top - stageRect.top) + pad + oh/2;
+    const topMax  = (r.bottom - stageRect.top) - pad - oh/2;
+
+    const cx = (r.left - stageRect.left) + r.width/2;
+    const cy = (r.top  - stageRect.top)  + r.height/2;
+
+    return {
+      x: Math.max(leftMin, Math.min(leftMax, cx)),
+      y: Math.max(topMin,  Math.min(topMax,  cy))
+    };
+  }
+
+  function moveOrbToCard(card){
+    const { x, y } = orbPosInsideCard(card);
+
+    orb.style.left = x + "px";
+    orb.style.top  = y + "px";
+    orb.style.opacity = "1";
+
+    card.classList.remove("is-pulse","is-hit");
+void card.offsetWidth; // reflow
+card.classList.add("is-pulse","is-hit");
+
+
+    // rastro
+const t = document.createElement("div");
+t.className = "orb-trail";
+t.style.left = orb.style.left;
+t.style.top  = orb.style.top;
+stage.appendChild(t);
+setTimeout(() => t.remove(), 1000);
+
+// pulse no card
+card.classList.remove("is-pulse");
+void card.offsetWidth;
+card.classList.add("is-pulse");
+
+
+    orb.classList.remove("is-hop");
+    void orb.offsetWidth; // reinicia animação
+    orb.classList.add("is-hop");
+  }
+
+  function runOrb(){
+    const order = zigzagOrder();
+    if (!order.length) return;
+
+    moveOrbToCard(cards[order[0]]);
+
+    let step = 1;
+    const loop = setInterval(() => {
+      if (stage.classList.contains("is-hide")) {
+        clearInterval(loop);
+        orb.style.opacity = "0";
+        return;
+      }
+      moveOrbToCard(cards[order[step % order.length]]);
+      step++;
+    }, HOP_GAP);
+  }
+
+  // ========= 5) SEQUÊNCIA =========
+  let started = false;
+
+  const io = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting || started) return;
+    started = true;
+
+    const initial = capturePositionsPx();
+    applyPxPositions(initial);
+
+    stage.classList.add("is-seq"); // seu flip geral
+
+    setTimeout(() => {
+      stage.classList.add("is-grid");
+      applyPxPositions(gridPositions());
+    }, GRID_DELAY);
+
+    setTimeout(() => {
+      runOrb();
+    }, ORB_START);
+
+    setTimeout(() => {
+      stage.classList.add("is-hide");
+      orb.style.opacity = "0";
+    }, HIDE_DELAY);
+
+    setTimeout(() => {
+      stage.classList.add("is-final");
+    }, FINAL_DELAY);
+
+    io.disconnect();
+  }, { threshold: 0.55 });
+
+  io.observe(stage);
+
+  window.addEventListener("resize", () => {
+    if (!started) return;
+    if (!stage.classList.contains("is-grid")) return;
+    applyPxPositions(gridPositions());
+  });
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const spreads = [...document.querySelectorAll(".spread")];
+  if (!spreads.length) return;
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-in");
+        io.unobserve(entry.target);
+      }
+    });
+  }, {
+    threshold: 0.15,                 // menor = mais fácil ativar no mobile
+    rootMargin: "0px 0px -15% 0px"   // ativa um pouco antes de chegar no centro
+  });
+
+  spreads.forEach(spread => io.observe(spread));
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  // Mais confiável que (hover:none) — funciona em emulador também
+  const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+
+  const blocks = document.querySelectorAll(".story-block");
+  if (!blocks.length) return;
+
+  // no touch: tap abre/fecha
+  if (isCoarsePointer) {
+    blocks.forEach(b => {
+      b.addEventListener("click", (e) => {
+        e.stopPropagation();
+
+        const willOpen = !b.classList.contains("is-open");
+        blocks.forEach(x => x.classList.remove("is-open"));
+        if (willOpen) b.classList.add("is-open");
+      });
+    });
+
+    document.addEventListener("click", () => {
+      blocks.forEach(x => x.classList.remove("is-open"));
+    });
+  }
+});
+
+
+
+
+
+/* =========================
+   FINAL DO PORTFÓLIO (fim real do scroll)
+========================= */
+document.addEventListener("DOMContentLoaded", () => {
+  const overlay = document.getElementById("endOverlay");
+  if (!overlay) return;
+
+  let played = false;
+
+  function lockScroll(lock){
+    document.documentElement.style.overflow = lock ? "hidden" : "";
+    document.body.style.overflow = lock ? "hidden" : "";
+  }
+
+  function atPageEnd(){
+    const doc = document.documentElement;
+    const scrollTop = window.scrollY || doc.scrollTop;
+    const viewport = window.innerHeight || doc.clientHeight;
+    const height = Math.max(doc.scrollHeight, document.body.scrollHeight);
+
+    // margem pequena (2px) por causa de arredondamento
+    return (scrollTop + viewport) >= (height - 2);
+  }
+
+  function runEnd(){
+  if (played) return;
+  played = true;
+
+  const phraseEl = document.getElementById("endPhrase");
+  const base = phraseEl?.querySelector(".base");
+
+  overlay.classList.add("is-show");
+  overlay.setAttribute("aria-hidden", "false");
+  lockScroll(true);
+
+  // cria camadas pra parecer “desfazendo”
+  if (phraseEl && base){
+    // limpa camadas antigas (segurança)
+    phraseEl.querySelectorAll(".layer").forEach(n => n.remove());
+
+    const LAYERS = 10; // 8~12 fica ótimo
+    for (let i = 0; i < LAYERS; i++){
+      const s = document.createElement("span");
+      s.className = "layer";
+      s.textContent = base.textContent;
+
+      // espalha para direções diferentes
+      const x = (Math.random() * 2 - 1) * (18 + i * 3);
+      const y = (-18 - Math.random() * 26) - i * 2;
+
+      s.style.setProperty("--x", `${x.toFixed(1)}px`);
+      s.style.setProperty("--y", `${y.toFixed(1)}px`);
+      s.style.setProperty("--d", `${i * 45}ms`);
+
+      phraseEl.appendChild(s);
     }
-    requestAnimationFrame(draw);
   }
-  draw();
 
-  /* ===== troca de frases ===== */
-  let index = 0;
-  const interval = Number(story.dataset.interval || 7500);
-  const stopAfter = Number(story.dataset.stopAfter || 24000);
-
-  steps.forEach(s => s.classList.remove("is-active"));
-  steps[0].classList.add("is-active");
-
-  let timer = setInterval(() => {
-    steps[index].classList.remove("is-active");
-    setTimeout(() => {
-      index = (index + 1) % steps.length;
-      steps[index].classList.add("is-active");
-    }, 1200);
-  }, interval);
-
-  /* ===== sequência KORA (sem bug) ===== */
+  // fica na tela 5s
   setTimeout(() => {
-    // 1) para a troca antes de esconder (evita piscada)
-    clearInterval(timer);
+    overlay.classList.add("is-dissolve");
 
-    // 2) deixa um step ativo e não mexe mais
-    steps.forEach(s => s.classList.remove("is-active"));
-    steps[Math.min(index, steps.length - 1)].classList.add("is-active");
-
-    // 3) esconde story
-    story.classList.add("is-hidden");
-
+    // dissolve rápido + fade do overlay
     setTimeout(() => {
-      // 4) flip
-      flipKora.classList.add("is-flipped");
-
-      // 5) move pra direita
-      spreadKora.classList.add("move-right");
+      overlay.classList.add("is-hide");
 
       setTimeout(() => {
-        // 6) fixa layout
-        spreadKora.classList.remove("move-right");
-        spreadKora.classList.add("is-swapped");
-      }, 900);
+        overlay.classList.remove("is-show","is-dissolve","is-hide");
+        overlay.setAttribute("aria-hidden", "true");
+        lockScroll(false);
+      }, 950);
 
-    }, 600);
+    }, 750);
 
-  }, stopAfter);
+  }, 5000);
+}
 
+
+  // checa no scroll (passive) + um fallback no resize
+  function onCheck(){
+    if (!played && atPageEnd()) runEnd();
+  }
+
+  window.addEventListener("scroll", onCheck, { passive: true });
+  window.addEventListener("resize", onCheck, { passive: true });
+
+  // caso a página já abra no fim (raríssimo)
+  onCheck();
 });
 
 
 
 
 
-document.addEventListener("DOMContentLoaded", () => {
 
-  /* ===== SMOKE + troca de frases (só no EcoMarine) ===== */
-  const storyEco = document.querySelector("#spreadEco .story--smoke");
-  const spreadEco = document.getElementById("spreadEco");
-  const flipEco = document.getElementById("ecoFlip");
 
-  if (!storyEco || !spreadEco || !flipEco) return;
 
-  const canvas = storyEco.querySelector(".smoke-canvas");
-  const ctx = canvas?.getContext("2d");
-  const steps = [...storyEco.querySelectorAll(".story-step")];
 
-  if (!canvas || !ctx || steps.length === 0) return;
+(() => {
+  const endfx = document.getElementById("endfx");
+  if (!endfx) return;
 
-  let w, h;
-  function resize(){
-    w = canvas.width  = Math.max(1, Math.floor(storyEco.offsetWidth  * 1.8));
-    h = canvas.height = Math.max(1, Math.floor(storyEco.offsetHeight * 1.8));
-  }
-  resize();
-  window.addEventListener("resize", resize);
+  let locked = false;
 
-  const particles = [];
-  const COUNT = 24;
-
-  function reset(p){
-    p.x = Math.random() * w;
-    p.y = Math.random() * h;
-    p.r = 90 + Math.random() * 180;
-    p.vx = -0.15 + Math.random() * 0.25;
-    p.vy = -0.06 + Math.random() * 0.12;
-    p.a = 0.006 + Math.random() * 0.01;
+  function atBottom() {
+    const near = 2; // precisa encostar no fim MESMO
+    return (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - near);
   }
 
-  for(let i=0;i<COUNT;i++){
-    const p = {};
-    reset(p);
-    particles.push(p);
-  }
+  function runEndFx() {
+    if (locked) return;
+    locked = true;
 
-  function draw(){
-    ctx.clearRect(0,0,w,h);
-    for(const p of particles){
-      const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
-      g.addColorStop(0, `rgba(255,255,255,${p.a})`);
-      g.addColorStop(1, `rgba(255,255,255,0)`);
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fill();
+    endfx.classList.add("is-on");
 
-      p.x += p.vx; p.y += p.vy;
-      if(p.x < -p.r) p.x = w + p.r;
-      if(p.y < -p.r) p.y = h + p.r;
-      if(p.y > h + p.r) p.y = -p.r;
-    }
-    requestAnimationFrame(draw);
-  }
-  draw();
+    // glitch rápido
+    setTimeout(() => endfx.classList.add("is-glitch"), 560);
+    setTimeout(() => endfx.classList.remove("is-glitch"), 1050);
 
-  // troca frases
-  let index = 0;
-  const interval = Number(storyEco.dataset.interval || 7500);
-  const stopAfter = Number(storyEco.dataset.stopAfter || 24000);
+    // fica ~5s e sai
+    setTimeout(() => endfx.classList.add("is-out"), 5200);
 
-  steps.forEach(s => s.classList.remove("is-active"));
-  steps[0].classList.add("is-active");
-
-  let timer = setInterval(() => {
-    steps[index].classList.remove("is-active");
+    // remove (pra não travar a página)
     setTimeout(() => {
-      index = (index + 1) % steps.length;
-      steps[index].classList.add("is-active");
-    }, 1200);
-  }, interval);
+      endfx.classList.remove("is-on", "is-out", "is-glitch");
+    }, 6000);
+  }
 
-  // ===== SEQUÊNCIA ECO: some story -> flip -> anda esquerda -> swap =====
-  setTimeout(() => {
-    clearInterval(timer);
-
-    steps.forEach(s => s.classList.remove("is-active"));
-    steps[Math.min(index, steps.length - 1)].classList.add("is-active");
-
-    storyEco.classList.add("is-hidden");
-
-    setTimeout(() => {
-      flipEco.classList.add("is-flipped");
-
-      // move para ESQUERDA (sutil)
-      spreadEco.classList.remove("move-right");
-
-      setTimeout(() => {
-        spreadEco.classList.remove("move-right");
-        spreadEco.classList.add("is-swapped");
-
-      }, 900);
-
-    }, 600);
-
-  }, stopAfter);
-
-});
-
-
-// ===== SEQUÊNCIA ECO: some story -> flip -> anda direita -> swap =====
-
-setTimeout(() => {
-  clearInterval(timer);
-
-  storyEco.classList.add("is-hidden");
-
-  setTimeout(() => {
-    // flip
-    flipEco.classList.add("is-flipped");
-
-    // move pra direita
-    spreadEco.classList.add("move-right");
-
-    setTimeout(() => {
-      // assenta layout + mostra texto da esquerda
-      spreadEco.classList.remove("move-right");
-      spreadEco.classList.add("is-swapped");
-    }, 900);
-
-  }, 600);
-
-}, stopAfter);
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const phrase = document.querySelector(".reveal-phrase");
-  if(!phrase) return;
-
-  // aparece depois de um tempinho (ex: 1.2s)
-  setTimeout(() => {
-    phrase.classList.add("is-visible");
-  }, 1200);
-});
-
-
-
+  window.addEventListener("scroll", () => {
+    if (atBottom()) runEndFx();
+  }, { passive: true });
+})();
 
 
 
