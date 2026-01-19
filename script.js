@@ -945,28 +945,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-// ===================== STORY 01/02/03 — TOQUE (mobile) =====================
+// =========================================================
+// STORY 01/02/03 — TAP no mobile (delegation, robusto)
+// =========================================================
 document.addEventListener("DOMContentLoaded", () => {
-  const blocks = document.querySelectorAll(".story-block");
-  if (!blocks.length) return;
+  // pega o container da story (se não tiver, sai)
+  const storyRow = document.querySelector(".story-row");
+  if (!storyRow) return;
 
-  blocks.forEach((b) => {
-    b.addEventListener("click", (e) => {
-      e.stopPropagation();
+  // abre/fecha ao tocar (funciona em mobile e desktop)
+  document.addEventListener("pointerdown", (e) => {
+    const block = e.target.closest(".story-block");
+    if (!block) {
+      // clicou fora => fecha tudo
+      document.querySelectorAll(".story-block.is-open")
+        .forEach(x => x.classList.remove("is-open"));
+      return;
+    }
 
-      // toggle: abre/fecha
-      const willOpen = !b.classList.contains("is-open");
+    // se clicou dentro da story, não deixa fechar imediatamente
+    const all = document.querySelectorAll(".story-block");
+    const willOpen = !block.classList.contains("is-open");
 
-      // fecha todos
-      blocks.forEach((x) => x.classList.remove("is-open"));
-
-      // abre só o clicado
-      if (willOpen) b.classList.add("is-open");
-    });
-  });
-
-  // tocar fora fecha tudo
-  document.addEventListener("click", () => {
-    blocks.forEach((x) => x.classList.remove("is-open"));
-  });
+    all.forEach(x => x.classList.remove("is-open"));
+    if (willOpen) block.classList.add("is-open");
+  }, { passive: true });
 });
+

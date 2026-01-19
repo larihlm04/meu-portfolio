@@ -2976,125 +2976,122 @@ html.has-open .card{ animation: none !important; }
 }
 
 
-/* ===========================
-   FIX FINAL — 01/02/03 LADO A LADO NO CELULAR
-   Cole no FINAL do CSS
-=========================== */
+/* =========================================================
+   STORY 01/02/03 — LIMPO (hover no desktop + tap no mobile)
+   - Desktop: 3 números em linha
+   - Hover: aparece texto
+   - Mobile: toque abre/fecha (classe .is-open)
+========================================================= */
 
-/* sempre 3 colunas no desktop */
+/* layout 3 colunas no desktop */
 .story-row{
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: clamp(14px, 2vw, 28px) !important;
-  align-items: start !important;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(18px, 3vw, 44px);
+  align-items: center;
 }
 
-/* NÃO deixa o mobile transformar em 1 coluna */
-@media (max-width: 900px){
-  .story-row{
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 12px !important;
-  }
-
-  /* garante que o bloco não fique “grande demais” e empurre */
-  .story-block{
-    min-height: 110px !important;
-  }
-
-  /* número grande mas sem estourar */
-  .story-big{
-    font-size: clamp(52px, 12vw, 86px) !important;
-  }
-
-  /* deixa o texto aparecer bem quando abrir (touch) */
-  .story-copy{
-    padding: 10px !important;
-  }
-}
-
-/* celular pequeno: ainda 3 colunas, mais compacto */
-@media (max-width: 520px){
-  .story-row{
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 10px !important;
-  }
-
-  .story-block{
-    min-height: 96px !important;
-  }
-
-  .story-big{
-    font-size: clamp(48px, 14vw, 78px) !important;
-  }
-}
-
-
-/* garante que o bloco é o "container" do hover */
+/* cada “slot” */
 .story-block{
-  position: relative !important;
-  overflow: hidden;
+  position: relative;
+  min-height: 140px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  pointer-events: auto;
 }
 
-/* número visível por padrão */
+/* NÚMERO GRANDE */
 .story-big{
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease !important;
+  position: relative;
+  font-family: 'Athachantr', serif;
+  font-size: clamp(70px, 7vw, 120px);
+  letter-spacing: .06em;
+  color: rgba(255,255,255,.12);
+
+  transition: opacity 260ms ease, transform 260ms ease;
+  user-select: none;
+  pointer-events: none; /* deixa o clique no bloco */
 }
 
-/* texto escondido por padrão (mas EXISTE e fica por cima) */
+/* TEXTO (fica por cima) */
 .story-copy{
-  position: absolute !important;
-  inset: 0 !important;
-  display: grid !important;
-  place-items: center !important;
-  text-align: center !important;
-  padding: 10px 14px !important;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 10px 14px;
 
-  opacity: 0 !important;
-  transform: translateY(8px) !important;
-  filter: blur(8px) !important;
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(8px);
+  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
 
-  pointer-events: none !important;
-  z-index: 3 !important;
+  pointer-events: none; /* no desktop não precisa clicar no texto */
+}
 
-  transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease !important;
+.story-title{
+  font-family: 'Athachantr', serif;
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: rgba(255,255,255,.92);
+}
+
+.story-sub{
+  font-size: 12px;
+  letter-spacing: .06em;
+  line-height: 1.55;
+  color: rgba(255,255,255,.78);
+  max-width: 30ch;
+  margin: 0 auto;
 }
 
 /* DESKTOP: hover */
-@media (hover: hover){
+@media (hover: hover) and (pointer: fine){
   .story-block:hover .story-copy{
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-    filter: blur(0) !important;
-    pointer-events: auto !important;
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
   }
-
   .story-block:hover .story-big{
-    opacity: 0 !important;
-    transform: translateY(-6px) !important;
-    filter: blur(6px) !important;
+    opacity: 0.06;
+    transform: scale(.98);
   }
 }
 
-/* CELULAR/TOUCH: abre no toque (seu JS adiciona .is-open) */
+/* MOBILE: abre com .is-open */
 .story-block.is-open .story-copy{
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-  filter: blur(0) !important;
-  pointer-events: auto !important;
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
 }
 
 .story-block.is-open .story-big{
-  opacity: 0 !important;
-  transform: translateY(-6px) !important;
-  filter: blur(6px) !important;
+  opacity: 0.06;
+  transform: scale(.98);
 }
 
-/* garante que dá pra tocar/clicar no bloco */
-.story-block{
-  pointer-events: auto !important;
-  cursor: pointer;
+/* tablet/mobile: vira 1 coluna pra ficar legível */
+@media (max-width: 900px){
+  .story-row{
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .story-block{
+    min-height: 120px;
+  }
+  .story-sub{
+    max-width: 42ch;
+  }
 }
 
 
