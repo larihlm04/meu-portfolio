@@ -3095,20 +3095,20 @@ html.has-open .card{ animation: none !important; }
 }
 
 
-/* =========================================
-   PATCH FINAL — STORY 01/02/03 SEM EMPILHAR
+/* ==========================================
+   STORY FIX DEFINITIVO (para o seu HTML atual)
    Cole NO FINAL do style.css
-========================================= */
+========================================== */
 
-/* sempre 3 colunas por padrão */
+/* 3 colunas sempre (se quiser 1 coluna no mobile, eu te passo depois) */
 .story-row{
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: clamp(14px, 2vw, 28px) !important;
+  gap: clamp(14px, 2.4vw, 34px) !important;
   align-items: center !important;
 }
 
-/* slot */
+/* remove qualquer “card” e garante clique */
 .story-block{
   position: relative !important;
   min-height: 140px !important;
@@ -3119,39 +3119,66 @@ html.has-open .card{ animation: none !important; }
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
+  backdrop-filter: none !important;
 
   cursor: pointer !important;
+  pointer-events: auto !important;
   -webkit-tap-highlight-color: transparent !important;
 }
 
-/* número */
+/* número aparece sempre */
 .story-big{
   position: relative !important;
+  display: block !important;
+
   font-family: 'Athachantr', serif !important;
   font-size: clamp(70px, 7vw, 120px) !important;
   letter-spacing: .06em !important;
   color: rgba(255,255,255,.12) !important;
+
+  opacity: 1 !important;
+  transform: none !important;
+  filter: none !important;
+
   transition: opacity 260ms ease, transform 260ms ease !important;
-  pointer-events: none !important;
+  pointer-events: none !important; /* clique fica no bloco */
 }
 
-/* texto por cima */
+/* texto por cima (invisível no começo) */
 .story-copy{
   position: absolute !important;
   inset: 0 !important;
   display: grid !important;
   place-items: center !important;
-  padding: 10px 14px !important;
 
   opacity: 0 !important;
   transform: translateY(10px) !important;
-  filter: blur(0px) !important;  /* <<< tira embaçado */
-  transition: opacity 260ms ease, transform 260ms ease !important;
+  filter: none !important;
 
+  transition: opacity 260ms ease, transform 260ms ease !important;
   pointer-events: none !important;
 }
 
-/* hover (desktop) */
+/* deixa o texto MAIS VISÍVEL */
+.story-sub{
+  display: block !important;
+  font-family: 'Athachantr', serif !important;
+  font-size: 18px !important;
+  letter-spacing: .08em !important;
+  color: rgba(255,255,255,.85) !important;
+  margin: 0 !important;
+}
+
+/* linha opcional */
+.story-line{
+  display: inline-block !important;
+  width: 44px !important;
+  height: 1px !important;
+  margin-top: 12px !important;
+  background: rgba(255,255,255,.22) !important;
+}
+
+/* DESKTOP: hover mostra texto e “apaga” número */
 @media (hover: hover) and (pointer: fine){
   .story-block:hover .story-copy{
     opacity: 1 !important;
@@ -3163,7 +3190,7 @@ html.has-open .card{ animation: none !important; }
   }
 }
 
-/* toque (mobile): JS coloca .is-open */
+/* MOBILE: quando JS colocar .is-open */
 .story-block.is-open .story-copy{
   opacity: 1 !important;
   transform: translateY(0) !important;
@@ -3173,12 +3200,13 @@ html.has-open .card{ animation: none !important; }
   transform: scale(.98) !important;
 }
 
-/* celular pequeno: continua 3 colunas, só reduz altura */
+/* celular: só reduz, mas continua lado a lado */
 @media (max-width: 520px){
   .story-block{ min-height: 110px !important; }
   .story-big{ font-size: 72px !important; }
-  .story-sub{ display: none !important; } /* opcional: fica mais clean */
+  .story-sub{ font-size: 14px !important; }
 }
+
 
 
 
