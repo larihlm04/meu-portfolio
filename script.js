@@ -779,30 +779,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Mais confiável que (hover:none) — funciona em emulador também
-  const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
 
-  const blocks = document.querySelectorAll(".story-block");
-  if (!blocks.length) return;
-
-  // no touch: tap abre/fecha
-  if (isCoarsePointer) {
-    blocks.forEach(b => {
-      b.addEventListener("click", (e) => {
-        e.stopPropagation();
-
-        const willOpen = !b.classList.contains("is-open");
-        blocks.forEach(x => x.classList.remove("is-open"));
-        if (willOpen) b.classList.add("is-open");
-      });
-    });
-
-    document.addEventListener("click", () => {
-      blocks.forEach(x => x.classList.remove("is-open"));
-    });
-  }
-});
 
 
 
@@ -943,32 +920,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-
-
 // =========================================================
-// STORY 01/02/03 — TAP no mobile (delegation, robusto)
+// STORY 01/02/03 — TAP (UM ÚNICO controlador, sem conflito)
 // =========================================================
 document.addEventListener("DOMContentLoaded", () => {
-  // pega o container da story (se não tiver, sai)
   const storyRow = document.querySelector(".story-row");
   if (!storyRow) return;
 
-  // abre/fecha ao tocar (funciona em mobile e desktop)
-  document.addEventListener("pointerdown", (e) => {
+  // abre/fecha tocando no bloco (mobile + desktop)
+  storyRow.addEventListener("pointerdown", (e) => {
     const block = e.target.closest(".story-block");
+
+    // clicou fora de um bloco => fecha tudo
     if (!block) {
-      // clicou fora => fecha tudo
-      document.querySelectorAll(".story-block.is-open")
+      storyRow.querySelectorAll(".story-block.is-open")
         .forEach(x => x.classList.remove("is-open"));
       return;
     }
 
-    // se clicou dentro da story, não deixa fechar imediatamente
-    const all = document.querySelectorAll(".story-block");
+    // evita conflito com outros handlers/cliques da página
+    e.preventDefault();
+    e.stopPropagation();
+
     const willOpen = !block.classList.contains("is-open");
 
-    all.forEach(x => x.classList.remove("is-open"));
+    // fecha todos
+    storyRow.querySelectorAll(".story-block.is-open")
+      .forEach(x => x.classList.remove("is-open"));
+
+    // abre o tocado
     if (willOpen) block.classList.add("is-open");
+  }, { passive: false });
+
+  // tocar fora da story fecha tudo
+  document.addEventListener("pointerdown", (e) => {
+    if (!e.target.closest(".story-row")) {
+      storyRow.querySelectorAll(".story-block.is-open")
+        .forEach(x => x.classList.remove("is-open"));
+    }
   }, { passive: true });
 });
 

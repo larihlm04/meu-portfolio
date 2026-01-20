@@ -3095,6 +3095,91 @@ html.has-open .card{ animation: none !important; }
 }
 
 
+/* =========================================
+   PATCH FINAL — STORY 01/02/03 SEM EMPILHAR
+   Cole NO FINAL do style.css
+========================================= */
+
+/* sempre 3 colunas por padrão */
+.story-row{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: clamp(14px, 2vw, 28px) !important;
+  align-items: center !important;
+}
+
+/* slot */
+.story-block{
+  position: relative !important;
+  min-height: 140px !important;
+  display: grid !important;
+  place-items: center !important;
+  text-align: center !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  cursor: pointer !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* número */
+.story-big{
+  position: relative !important;
+  font-family: 'Athachantr', serif !important;
+  font-size: clamp(70px, 7vw, 120px) !important;
+  letter-spacing: .06em !important;
+  color: rgba(255,255,255,.12) !important;
+  transition: opacity 260ms ease, transform 260ms ease !important;
+  pointer-events: none !important;
+}
+
+/* texto por cima */
+.story-copy{
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 10px 14px !important;
+
+  opacity: 0 !important;
+  transform: translateY(10px) !important;
+  filter: blur(0px) !important;  /* <<< tira embaçado */
+  transition: opacity 260ms ease, transform 260ms ease !important;
+
+  pointer-events: none !important;
+}
+
+/* hover (desktop) */
+@media (hover: hover) and (pointer: fine){
+  .story-block:hover .story-copy{
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+  .story-block:hover .story-big{
+    opacity: .06 !important;
+    transform: scale(.98) !important;
+  }
+}
+
+/* toque (mobile): JS coloca .is-open */
+.story-block.is-open .story-copy{
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+.story-block.is-open .story-big{
+  opacity: .06 !important;
+  transform: scale(.98) !important;
+}
+
+/* celular pequeno: continua 3 colunas, só reduz altura */
+@media (max-width: 520px){
+  .story-block{ min-height: 110px !important; }
+  .story-big{ font-size: 72px !important; }
+  .story-sub{ display: none !important; } /* opcional: fica mais clean */
+}
+
 
 
 
